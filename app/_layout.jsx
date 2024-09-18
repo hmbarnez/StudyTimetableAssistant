@@ -4,6 +4,12 @@ import { SplashScreen, Stack } from 'expo-router'
 import { NativeWindStyleSheet } from "nativewind";
 import { useFonts } from 'expo-font';
 import { useEffect } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import LandingScreen from './(screen)/LandingScreen';
+import StartingScreen from './(screen)/StartingScreen';
+import SignIn from './(auth)/sign-in'
+import SignUp from './(auth)/sign-up'
 
 //necessary for native wind to work
 NativeWindStyleSheet.setOutput({
@@ -28,20 +34,43 @@ const RootLayout = () => {
 
   useEffect(() => {
     if (error) throw error;
-  
+
     if (fontsLoaded) {
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded, error]);
-  
+
   if (!fontsLoaded && !error) {
     return null;
   }
 
+  const Stack = createStackNavigator();
+
   return (
-    <Stack>
-        <Stack.Screen name="index" options={{ title: 'Home', headerShown: false}}/>
-    </Stack>
+    <NavigationContainer independent={true}>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen
+          name="Landing"
+          component={LandingScreen}
+          options={{ title: 'Landing', headerShown: false }}
+        />
+        <Stack.Screen
+          name="Starting"
+          component={StartingScreen}
+          options={{ title: 'Starting', headerShown: false }}
+        />
+        <Stack.Screen
+          name="Sign In"
+          component={SignIn}
+          options={{ title: 'Sign In', headerShown: false }}
+        />
+        <Stack.Screen
+          name="Sign Up"
+          component={SignUp}
+          options={{ title: 'Sign Up', headerShown: false }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   )
 }
 
