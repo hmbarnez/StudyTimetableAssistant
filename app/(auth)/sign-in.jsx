@@ -22,7 +22,7 @@ const SignIn = () => {
 
   return (
     //change to use bg-primary later from tailwind config
-    <SafeAreaView className="bg-emerald-500 h-full">
+    <SafeAreaView className="bg-[#4DC591] h-full">
       <View>
         <Text>arrow button up here</Text>
       </View>
