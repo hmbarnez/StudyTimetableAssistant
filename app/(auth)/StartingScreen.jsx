@@ -38,7 +38,7 @@ export default function StartingScreen() {
                             Sign In
                         </Text>
                     </Pressable>
-                    <Pressable style={styles.button} onPress={() => { navigation.navigate('sign-up') }}>
+                    <Pressable style={styles.button} onPress={() => { router.navigate('sign-up') }}>
                         <Text style={styles.buttonText}>
                             Create An Account
                         </Text>
