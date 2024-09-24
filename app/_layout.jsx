@@ -28,12 +28,12 @@ const RootLayout = () => {
 
   useEffect(() => {
     if (error) throw error;
-  
+
     if (fontsLoaded) {
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded, error]);
-  
+
   if (!fontsLoaded && !error) {
     return null;
   }
@@ -41,6 +41,9 @@ const RootLayout = () => {
   return (
     <Stack>
         <Stack.Screen name="index" options={{ title: 'Home', headerShown: false}}/>
+        <Stack.Screen name="(auth)" options={{ headerShown: false}}/>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false}}/>
+        <Stack.Screen name="(start)" options={{ headerShown: false}}/>
     </Stack>
   )
 }

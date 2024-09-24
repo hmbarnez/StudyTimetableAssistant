@@ -7,17 +7,16 @@ import AuthButton from '../../components/AuthButton'
 import { router , Link} from 'expo-router'
 
 
-const SignIn = () => {
+const ForgotPassword = () => {
 
   const [form, setform] = useState({
     email: '',
-    password: ''
   })
 
   const submit = () => {
     //sign in logic here
     console.log(form)
-    router.navigate('../(tabs)/home')
+    router.navigate('/sign-in')
   }
 
   return (
@@ -29,7 +28,7 @@ const SignIn = () => {
       <View className="w-full justify-around min-h-[85vh] mt-40 px-4 bg-white rounded-3xl">
         <View>
           <Text className="text-black text-4xl text-semibold mt-10 font-psemibold text-center">
-            Log in with email
+            Forgot Password?
           </Text>
 
           <AuthFormField
@@ -40,25 +39,16 @@ const SignIn = () => {
             otherStyles="mt-7"
             keyBoardType="email-address"
           />
-          <AuthFormField
-            title='Password'
-            placeholder={'Password'}
-            value={form.password}
-            handleChangeText={(e) => setform({...form, password: e})}
-            otherStyles="mt-4"
-          />
+          
 
-          <View className="justify-end pt-5  px-5 flex-row gap-2">
-            <Text>
-              <Link 
-                className="text-base text-secondary font-pregular"
-                href='/forgot-password'>Forgot Password?</Link>
-              </Text>
+          <View className="justify-center pt-5  px-5 flex-row gap-2">
+            <Text className="text-base text-center font-pregular"
+            >Reset your password if you already have an account</Text>
           </View>
         </View>
         <View>
           <AuthButton
-            title="Sign in"
+            title="Reset Password"
             handlesPress={submit}
           />
         </View>
@@ -67,4 +57,4 @@ const SignIn = () => {
   )
 }
 
-export default SignIn
+export default ForgotPassword
