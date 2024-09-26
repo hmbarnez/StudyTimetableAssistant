@@ -4,6 +4,7 @@ import logo from '../../assets/images/logo.png';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, doc, getDoc } from 'firebase/firestore'; // Import Firestore functions
+import { router } from 'expo-router';
 
 const Profile = () => {
   const [user, setUser] = useState(null); // State to store user data
@@ -33,6 +34,17 @@ const Profile = () => {
     }
   }, []);
 
+  // Navigate to the Account Settings page when the button is clicked
+  const goToAccountSettings = () => {
+    router.push('/account-settings'); //
+  };
+
+  const goToNotificationSettings = () => {
+    router.push('/notification-settings'); //
+  };
+  const goTofeedback = () => {
+    router.push('/feedback'); //
+  };
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
@@ -52,15 +64,15 @@ const Profile = () => {
         {/* Settings Section */}
         <View style={styles.settingsSection}>
           <Text style={styles.settingsHeading}>Settings</Text>
-          <TouchableOpacity style={styles.settingOption}>
+          <TouchableOpacity style={styles.settingOption} onPress={goToAccountSettings}>
             <Text>Account Settings</Text>
             <Text style={styles.arrow}>›</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.settingOption}>
+          <TouchableOpacity style={styles.settingOption} onPress={goToNotificationSettings}>
             <Text>Notification Settings</Text>
             <Text style={styles.arrow}>›</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.settingOption}>
+          <TouchableOpacity style={styles.settingOption} onPress={goTofeedback}>
             <Text>Feedback</Text>
             <Text style={styles.arrow}>›</Text>
           </TouchableOpacity>
