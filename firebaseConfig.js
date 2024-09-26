@@ -3,12 +3,12 @@ import { getFirestore } from 'firebase/firestore';
 
 // Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyB78N4Y_4-NHu8peczpTuoNZqQePZwpKAI",
-  authDomain: "studyplanner-77733.firebaseapp.com",
-  projectId: "studyplanner-77733",
-  storageBucket: "studyplanner-77733.appspot.com",
-  messagingSenderId: "243223055493",
-  appId: "1:243223055493:web:0ce703fad0e93779652dec"
+    apiKey: process.env.EXPO_PUBLIC_REACT_APP_API_KEY,
+    authDomain: process.env.EXPO_PUBLIC_REACT_APP_AUTH_DOMAIN,
+    projectId: process.env.EXPO_PUBLIC_REACT_APP_PROJECT_ID,
+    storageBucket: process.env.EXPO_PUBLIC_REACT_APP_STORAGE_BUCKET,
+    messagingSenderId: process.env.EXPO_PUBLIC_REACT_APP_MESSAGING_SENDER_ID,
+    appId: process.env.EXPO_PUBLIC_REACT_APP_ID,
 };
 
 // Initialize Firebase
