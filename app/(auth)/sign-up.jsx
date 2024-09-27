@@ -1,4 +1,4 @@
-import { View, Text , TouchableOpacity, Image} from 'react-native'
+import { View, Text , TouchableOpacity, Image, ScrollView} from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import React from 'react'
 import { useState } from 'react'
@@ -6,6 +6,9 @@ import AuthFormField from '../../components/AuthFormField'
 import AuthButton from '../../components/AuthButton'
 import { router , Link} from 'expo-router'
 import { icons } from '../../constants'
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
+import app from '../../firebaseConfig';
 
 const SignUp = () => {
 
@@ -17,15 +20,52 @@ const SignUp = () => {
     confirmPassword: '',
   })
 
-  const submit = () => {
-    //sign in logic here
-    console.log(form)
-    // router.navigate('/sign-in')
-  }
+  const submit = async () => {
+    //sign up logic
+    const { firstName, lastName, email, password, confirmPassword } = form;
 
+    // Basic validation
+    if (!email || !password || !confirmPassword || !firstName || !lastName) {
+      console.error("All fields are required!");
+      return;
+    }
+    if (password !== confirmPassword) {
+      console.error("Passwords do not match!");
+      return;
+    }
+
+    const auth = getAuth(app);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Add user details to Firestore
+      const db = getFirestore(app);
+      const userDoc = doc(db, 'Users', user.uid);
+      await setDoc(userDoc, {
+        firstName,
+        lastName,
+        email,
+      }).then(() => {
+        console.log("User added to Firestore successfully.");
+      }).catch((error) => {
+        console.error("Error adding user to Firestore: ", error);
+      });
+
+      console.log("User added to Firestore: ", user.uid);
+
+      // Navigate to sign-in or home screen after successful signup
+      router.push('../profile');
+    } catch (error) {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.error("Error during sign-up:", errorCode, errorMessage);
+    }
+};
   return (
     //change to use bg-primary later from tailwind config
     <SafeAreaView className="bg-[#4DC591] h-full">
+      <ScrollView>
       <View>
       <TouchableOpacity onPress={() =>{router.back()}}>
           <Image source={icons.lefticon} className="w-6 h-6 mt-10 ml-5" />
@@ -87,6 +127,7 @@ const SignUp = () => {
           />
         </View>
       </View>
+      </ScrollView>
     </SafeAreaView>
   )
 }
