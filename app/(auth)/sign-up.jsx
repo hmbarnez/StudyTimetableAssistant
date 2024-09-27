@@ -1,10 +1,11 @@
-import { View, Text, ScrollView } from 'react-native'
+import { View, Text , TouchableOpacity, Image, ScrollView} from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import React from 'react'
 import { useState } from 'react'
 import AuthFormField from '../../components/AuthFormField'
 import AuthButton from '../../components/AuthButton'
 import { router , Link} from 'expo-router'
+import { icons } from '../../constants'
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import app from '../../firebaseConfig';
@@ -66,9 +67,11 @@ const SignUp = () => {
     <SafeAreaView className="bg-[#4DC591] h-full">
       <ScrollView>
       <View>
-        <Text>arrow button up here</Text>
+      <TouchableOpacity onPress={() =>{router.back()}}>
+          <Image source={icons.lefticon} className="w-6 h-6 mt-10 ml-5" />
+        </TouchableOpacity>
       </View>
-      <View className="w-full justify-around min-h-[85vh] mt-40 px-4 bg-white rounded-3xl">
+      <View className="w-full justify-around min-h-[85vh] mt-[80px] px-4 bg-white rounded-3xl">
         <View>
           <Text className="text-black text-4xl text-semibold  font-psemibold text-center">
             Sign Up
@@ -120,7 +123,7 @@ const SignUp = () => {
           <AuthButton
             title="Create Account"
             handlesPress={submit}
-            containerStyles={'mb-10'}
+            containerStyles={'mb-20'}
           />
         </View>
       </View>
