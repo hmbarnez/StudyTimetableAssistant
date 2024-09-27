@@ -1,6 +1,6 @@
-import { TouchableOpacity, Text, View} from 'react-native'
+import { TouchableOpacity, Text, View, Image} from 'react-native'
 import React from 'react'
-
+import { icons } from '../constants'
 
 const ScheduleButton = ({title, handlesPress, containerStyles, textStyles, isLoading, isActive}) => {
   return (
@@ -9,10 +9,14 @@ const ScheduleButton = ({title, handlesPress, containerStyles, textStyles, isLoa
           className={` rounded-xl min-h-[70px] min-w-[70px] justify-center 
           items-center ${containerStyles} ${isLoading ? 'opacity-50' : ''} ${(isActive) ? 'bg-[#4DC591]' : 'bg-[#F2F2F7]'}`}
           onPress={handlesPress}
-          activeOpacity={0.5}
-          disabled={isLoading}
+          activeOpacity={0.5} 
       >
-          <Text className={`text-white font-plight text-lg ${textStyles}`}>ICON</Text>
+          <Image 
+            source={(title === 'Months') ? icons.monthview : icons.dayview}
+            className="w-12 h-12"
+            resizeMode='contain'
+            tintColor={"#00664F"}
+          />
       </TouchableOpacity>
       <Text className={`text-black font-plight text-lg pt-2 text-center${textStyles}`}>{title}</Text>
     </View>

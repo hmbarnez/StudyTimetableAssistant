@@ -8,6 +8,10 @@ const events = [
   { title: 'Gym', startTime: 13, endTime: 15, eventColor: '#ACF4D1' },
   { title: 'Project Work', startTime: 14, endTime: 16, eventColor: '#ACE7F4' },
   { title: 'Test Event', startTime: 13, endTime: 17, eventColor: '#ACF4D1' },
+  { title: 'Dinner', startTime: 18, endTime: 19, eventColor: '#ACE7F4' },
+  { title: 'Movie Night', startTime: 20, endTime: 22, eventColor: '#ACF4D1' },
+  { title: 'Reading', startTime: 21, endTime: 22, eventColor: '#ACE7F4' },
+  { title: 'Sleep', startTime: 23, endTime: 24, eventColor: '#ACF4D1' },
 ];
 
 // Helper function to sort events by start time
@@ -121,6 +125,7 @@ const styles = StyleSheet.create({
   eventBlock: {
     position: 'absolute',
     borderWidth: 1,
+    borderColor: '#F2F2F7',
     borderRadius: 5,
     padding: 10,
   },

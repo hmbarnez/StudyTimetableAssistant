@@ -12,6 +12,10 @@ import eyeHide from "../assets/icons/eye-hide.png";
 import eye from "../assets/icons/eye.png";
 import play from "../assets/icons/play.png";
 import schedule from "../assets/icons/schedule.png";
+import monthview from "../assets/icons/monthview.png";
+import dayview from "../assets/icons/dayview.png";
+import lefticon from "../assets/icons/lefticon.png";
+import righticon from "../assets/icons/righticon.png";
 
 export default {
   play,
@@ -28,4 +32,8 @@ export default {
   eyeHide,
   eye,
   schedule,
+  monthview,
+  dayview,
+  lefticon,
+  righticon,
 };

@@ -22,7 +22,7 @@ const Schedule = () => {
 
 
   return (
-    <View className="bg-white px-4 h-full w-full justify-center" >
+    <View className="bg-white px-4 pt-20 h-full w-full justify-center" >
       <View className="flex flex-row justify-evenly items-center pt-10  bg-white">
         <ScheduleButton 
           title="Months" 
@@ -36,7 +36,7 @@ const Schedule = () => {
         />
       </View>
       {/* view for calendar and timeline */}
-      <View className="w-full flex-1 mt-10 pb-2">
+      <View className="w-full flex-1 mt-6 pb-2 mb-80">
         {!isActive ? (
         <Calendar
           markedDates={Object.keys(items).reduce((acc, date) => {
@@ -63,14 +63,14 @@ const Schedule = () => {
             return(
               <View>
                 {direction === 'left' ? (
-                  <Image source={icons.leftArrow} 
+                  <Image source={icons.lefticon} 
                     className="w-6 h-6"
                     resizeMode='contain'
                     tintColor={'#4DC591'}
                   />
                 ) : (
                   <Image 
-                    source={icons.rightArrow} 
+                    source={icons.righticon} 
                     className="w-6 h-6"
                     resizeMode='contain'
                     tintColor={'#4DC591'}
@@ -80,7 +80,7 @@ const Schedule = () => {
             )
           }}
         />) : (
-        <View className="rounded-3xl p-2 bg-[#F2F2F7] h-[600]">
+        <View className="rounded-3xl p-2 bg-[#F2F2F7] h-[540px] pb-8">
           <DayView />
         </View>
         )}
