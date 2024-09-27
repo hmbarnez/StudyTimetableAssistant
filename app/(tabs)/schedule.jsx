@@ -1,8 +1,9 @@
-import {View,SafeAreaView,StyleSheet,Text,TouchableOpacity,Image, Pressable} from 'react-native';
+import {View,SafeAreaView,StyleSheet,Text,TouchableOpacity,Image, Pressable, ScrollView} from 'react-native';
 import { Calendar, Timeline } from 'react-native-calendars';
 import React, { useState } from 'react';
 import { icons } from '../../constants';
 import ScheduleButton from '../../components/ScheduleButton';
+import DayView from '../../components/DayView';
 
 const Schedule = () => {
   
@@ -22,9 +23,7 @@ const Schedule = () => {
 
   return (
     <View className="bg-white px-4 h-full w-full justify-center" >
-
       <View className="flex flex-row justify-evenly items-center pt-10  bg-white">
-
         <ScheduleButton 
           title="Months" 
           isActive={!isActive}
@@ -81,8 +80,8 @@ const Schedule = () => {
             )
           }}
         />) : (
-        <View className="border-2 rounded-3xl p-2 border-[#F2F2F7]">
-          <Timeline/>
+        <View className="rounded-3xl p-2 bg-[#F2F2F7] h-[600]">
+          <DayView />
         </View>
         )}
       </View>
