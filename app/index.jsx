@@ -3,8 +3,6 @@ import { StatusBar } from 'expo-status-bar';
 import { View, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import logo from '../assets/images/logo.png';
-import { useEffect } from 'react';
-import { router} from 'expo-router'
 import { useEffect, useState } from 'react';
 
 // Firebase imports
