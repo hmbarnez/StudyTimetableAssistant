@@ -9,7 +9,7 @@ export default function App() {
   useEffect(() => {
     // Automatically navigate to 'auth' screen after 3 seconds
     const timer = setTimeout(() => {
-      router.push('(tabs)/home'); // 'push' navigates to (auth) screen
+      router.push('(tabs)/starting'); // 'push' navigates to (auth) screen
     }, 3000);
     return () => clearTimeout(timer);
   }, []);
