@@ -23,22 +23,22 @@ export default function StartingScreen() {
             textAlign: "center",
             padding: 16,
             fontSize: 16,
-            fontFamily: "Poppins"
+            // fontFamily: "Poppins"
         }
     })
 
     return (
-        <SafeAreaView className="flex-1 items-center justify-center bg-emerald-500">
+        <SafeAreaView className="flex-1 items-center justify-center bg-[#4DC591]">
             <View className="w-full justify-center items-center min-h-[100vh]">
                 <Image source={logo} />
                 <View>
                     <Pressable style={styles.button}>
-                        <Text style={styles.buttonText} onPress={() => { router.navigate('sign-in') }}>
+                        <Text className="font-pregular" style={styles.buttonText} onPress={() => { router.navigate('sign-in') }}>
                             Sign In
                         </Text>
                     </Pressable>
                     <Pressable style={styles.button} onPress={() => { router.navigate('sign-up') }}>
-                        <Text style={styles.buttonText}>
+                        <Text className="font-pregular" style={styles.buttonText}>
                             Create An Account
                         </Text>
                     </Pressable>
