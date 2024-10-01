@@ -43,7 +43,7 @@ export default function App() {
         if (isAuthenticated) {
           router.push('/(tabs)/home');  // Assuming HomeScreen is for authenticated users
         } else {
-          router.push('/(auth)/StartingScreen');  // Assuming StartingScreen is for non-authenticated users
+          router.push('/(auth)/starting');  // Assuming StartingScreen is for non-authenticated users
         }
       }, 3000);
       return () => clearTimeout(timer);
