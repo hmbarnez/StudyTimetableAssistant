@@ -55,7 +55,7 @@ const SignUp = () => {
       console.log("User added to Firestore: ", user.uid);
 
       // Navigate to sign-in or home screen after successful signup
-      router.push('../profile');
+      router.push('/(tabs)/home');
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
@@ -71,7 +71,7 @@ const SignUp = () => {
           <Image source={icons.lefticon} className="w-6 h-6 mt-10 ml-5" />
         </TouchableOpacity>
       </View>
-      <View className="w-full justify-around min-h-[85vh] mt-[80px] px-4 bg-white rounded-3xl">
+      <View className="w-full justify-around min-h-[88vh] mt-[80px] px-4 bg-white rounded-3xl">
         <View>
           <Text className="text-black text-4xl text-semibold  font-psemibold text-center">
             Sign Up

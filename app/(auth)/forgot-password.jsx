@@ -27,7 +27,7 @@ const ForgotPassword = () => {
           <Image source={icons.lefticon} className="w-6 h-6 mt-10 ml-5" />
         </TouchableOpacity>
       </View>
-      <View className="w-full justify-around min-h-[85vh] mt-[80px] px-4 bg-white rounded-3xl">
+      <View className="w-full justify-around min-h-[88vh] mt-[80px] px-4 bg-white rounded-3xl">
         <View>
           <Text className="text-black text-4xl text-semibold mt-10 font-psemibold text-center">
             Forgot Password?
