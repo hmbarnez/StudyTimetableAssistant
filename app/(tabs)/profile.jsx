@@ -2,7 +2,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'rea
 import React, { useState, useEffect } from 'react';
 import logo from '../../assets/images/logo.png';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { getAuth } from 'firebase/auth';
+import { getAuth, signOut } from 'firebase/auth';
 import { getFirestore, doc, getDoc } from 'firebase/firestore'; // Import Firestore functions
 import { router } from 'expo-router';
 
@@ -45,6 +45,18 @@ const Profile = () => {
   const goTofeedback = () => {
     router.push('/feedback'); //
   };
+  // Handle user logout
+  const handleLogout = () => {
+    const auth = getAuth();
+    signOut(auth)
+      .then(() => {
+        console.log('User signed out');
+        router.push('/starting'); // Redirect to login screen after logout
+      })
+      .catch((error) => {
+        console.error('Error signing out:', error);
+      });
+  };
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
@@ -83,7 +95,7 @@ const Profile = () => {
           <TouchableOpacity style={styles.deleteButton}>
             <Text style={styles.deleteButtonText}>Delete my account</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.logoutButton}>
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
             <Text style={styles.logoutButtonText}>Log out</Text>
           </TouchableOpacity>
         </View>
