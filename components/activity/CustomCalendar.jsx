@@ -5,7 +5,7 @@ import { Calendar } from "react-native-calendars";
 import { icons } from "../../constants";
 
 
-const CustomCalendar = ({ date, setDate, onClose, handleInputChange}) => {
+const CustomCalendar = ({ date, setDate, onClose, handleInputChange, fieldName}) => {
 
   return (
     <View>
@@ -29,7 +29,7 @@ const CustomCalendar = ({ date, setDate, onClose, handleInputChange}) => {
           onDayPress={(day) => {
             console.log("selected day", day);
             setDate(day.dateString); // Update the date in the parent component
-            handleInputChange("examDate", day.dateString);
+            handleInputChange(fieldName, day.dateString);
             setTimeout(() => {
               onClose(); // Close the modal after selection
             }, 100);

@@ -23,21 +23,20 @@ const Activity = () => {
     classSubjectName: '',
     classRoom: '',
     classBuilding: '',
-    classDate: '',
     classDays: '', // State to store days for repeating events
     classStartDate: '',
     classEndDate: '',
     classStartTime: '',
     classEndTime: '',
-    classOccurs: 'Once', // State for "Occurs" in Classes
 
     // Task fields
     taskTitle: '',
     taskDescription: '',
-    taskDueDate: '',
+    taskDate: '',
     taskStartDate: '',
     taskEndDate: '',
-    taskDueTime: '',
+    taskStartTime: '',
+    taskEndTime: '',
     taskDays: '', // State to store days for repeating tasks
     taskOccurs: 'Once', // Separate state for "Occurs" in Tasks
   };
@@ -51,9 +50,7 @@ const Activity = () => {
   };
 
   const toggleOccurs = (occursType, type) => {
-    if (type === 'class') {
-      setForm({ ...form, classOccurs: occursType });
-    } else if (type === 'task') {
+    if (type === 'task') {
       setForm({ ...form, taskOccurs: occursType });
     }
   };

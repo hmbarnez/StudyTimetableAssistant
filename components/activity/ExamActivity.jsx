@@ -51,8 +51,10 @@ const ExamActivity = ({ form, handleInputChange }) => {
 
       <View>
         <Text className="text-l font-psemibold">Date</Text>
-        <Text className="text-center my-2 text-l font-pregular">{(form.examDate === "") ? "YYYY-MM-DD" : form.examDate}</Text>
-        <CustomDatePicker date={date} setDate={setDate} handleInputChange={handleInputChange}/>
+        <View className="flex-row items-center">
+          <CustomDatePicker date={date} setDate={setDate} handleInputChange={handleInputChange} fieldName={"examDate"}/>
+          <Text className="text-center my-2 text-lg font-pmedium">{(form.examDate === "") ? "YYYY-MM-DD" : form.examDate}</Text>
+        </View>
       </View>
 
       <View className="flex-row justify-between mt-2">
