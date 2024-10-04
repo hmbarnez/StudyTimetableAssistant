@@ -130,24 +130,9 @@ const AccountSettings = () => {
             placeholder="Email"
             value={updatedDetails.email}
             handleChangeText={(text) => setUpdatedDetails({ ...updatedDetails, email: text })}
+            editable = {false}
           />
 
-          {/* Password Fields */}
-          <Text>Password</Text>
-          <AuthFormField
-            title='Password'
-            placeholder={'Current Password'}
-            // value={form.password}
-            // handleChangeText={(e) => setform({...form, password: e})}
-            otherStyles="mt-4"
-          />
-          <AuthFormField
-            title='Password'
-            placeholder={'New Password'}
-            // value={form.confirmPassword}
-            // handleChangeText={(e) => setform({...form, Password: e})}
-            otherStyles="mt-4"
-          />
         </View>
 
         <View style={styles.buttonContainer}>
