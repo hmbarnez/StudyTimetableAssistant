@@ -55,6 +55,13 @@ const Activity = () => {
     }
   };
 
+  const convertTo12Hour = (time) => {
+    let [hours, minutes] = time.split(':').map(Number);
+    const period = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12; // Convert "00" to "12" and "13-23" to "1-11"
+    return `${hours}:${minutes.toString().padStart(2, '0')} ${period}`;
+  };
+
   //submit form function will put in a separate file
   // const submitForm = async () => {
   //   try {
@@ -100,17 +107,17 @@ const Activity = () => {
         <View className="w-full p-4 pt-0 space-y-4">
           {/* Conditional Rendering for "Exams" */}
           {activityType === 'Exams' && (
-            <ExamActivity form={form} handleInputChange={handleInputChange} />
+            <ExamActivity form={form} handleInputChange={handleInputChange} formatTime={convertTo12Hour}/>
           )}
 
           {/* Placeholder for "Classes" */}
           {activityType === 'Classes' && (
-            <ClassActivity form={form} handleInputChange={handleInputChange} toggleOccurs={toggleOccurs} />
+            <ClassActivity form={form} handleInputChange={handleInputChange} formatTime={convertTo12Hour} />
           )}
 
           {/* Placeholder for "Tasks" */}
           {activityType === 'Tasks' && (
-            <TaskActivity form={form} handleInputChange={handleInputChange} toggleOccurs={toggleOccurs} />
+            <TaskActivity form={form} handleInputChange={handleInputChange} toggleOccurs={toggleOccurs} formatTime={convertTo12Hour} />
           )}
 
           {/* Save and Cancel Buttons */}

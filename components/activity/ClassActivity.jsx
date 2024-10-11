@@ -2,8 +2,9 @@ import React from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { useState } from "react";
 import CustomDatePicker from "./CustomDatePicker";
+import CustomTimePicker from './CustomTimePicker';
 
-const ClassActivity = ({ form, handleInputChange }) => {
+const ClassActivity = ({ form, handleInputChange, formatTime}) => {
   const [startClassDate, setStartClassDate] = useState("");
   const [endClassDate, setEndClassDate] = useState("");
 
@@ -12,6 +13,8 @@ const ClassActivity = ({ form, handleInputChange }) => {
       <View>
         <Text className="text-l font-psemibold">Subject</Text>
         <TextInput
+          id="className"
+          name="className"
           placeholder="Name"
           value={form.classSubject}
           onChangeText={(value) => handleInputChange("classSubject", value)}
@@ -22,6 +25,8 @@ const ClassActivity = ({ form, handleInputChange }) => {
       <View>
         <Text className="text-l font-psemibold mt-2">Subject Name</Text>
         <TextInput
+          id="classSubjectName"
+          name="classSubjectName"
           placeholder="Subject Name"
           value={form.classSubjectName}
           onChangeText={(value) => handleInputChange("classSubjectName", value)}
@@ -33,6 +38,8 @@ const ClassActivity = ({ form, handleInputChange }) => {
         <View className="flex-1 mr-2">
           <Text className="text-l font-psemibold">Room</Text>
           <TextInput
+            id="classRoom"
+            name="classRoom"
             placeholder="Room"
             value={form.classRoom}
             onChangeText={(value) => handleInputChange("classRoom", value)}
@@ -43,6 +50,8 @@ const ClassActivity = ({ form, handleInputChange }) => {
         <View className="flex-1 ml-2">
           <Text className="text-l font-psemibold">Building</Text>
           <TextInput
+            id="classBuilding"
+            name="classBuilding"
             placeholder="Building"
             value={form.classBuilding}
             onChangeText={(value) => handleInputChange("classBuilding", value)}
@@ -55,6 +64,8 @@ const ClassActivity = ({ form, handleInputChange }) => {
       <View>
         <Text className="text-l font-psemibold mt-2">Days</Text>
         <TextInput
+          id="classDays"
+          name="classDays"
           placeholder="e.g., Mon, Wed, Fri"
           value={form.classDays}
           onChangeText={(value) => handleInputChange("classDays", value)}
@@ -95,22 +106,28 @@ const ClassActivity = ({ form, handleInputChange }) => {
       <View className="flex-row justify-between mt-2">
         <View className="flex-1 mr-2">
           <Text className="text-l font-psemibold">Start Time</Text>
-          <TextInput
-            placeholder="Start"
-            value={form.classStartTime}
-            onChangeText={(value) => handleInputChange("classStartTime", value)}
-            className="text-[#61677D] font-pregular border border-gray-300 rounded p-2 mt-1"
-          />
+          <View className="flex-row items-center">
+            <CustomTimePicker 
+              title={"start"} 
+              handleInputChange={handleInputChange} 
+              fieldName={"classStartTime"} 
+              endTime={form.classEndTime} 
+            />
+            <Text className="text-center my-2 text-lg font-pmedium">{(form.classStartTime === "") ? "00:00" : formatTime(form.classStartTime)}</Text>
+          </View>
         </View>
 
         <View className="flex-1 ml-2">
           <Text className="text-l font-psemibold">End Time</Text>
-          <TextInput
-            placeholder="End"
-            value={form.classEndTime}
-            onChangeText={(value) => handleInputChange("classEndTime", value)}
-            className="text-[#61677D] font-pregular border border-gray-300 rounded p-2 mt-1"
-          />
+          <View className="flex-row items-center">
+            <CustomTimePicker 
+              title={"end"} 
+              handleInputChange={handleInputChange} 
+              fieldName={"classEndTime"} 
+              startTime={form.classStartTime}
+            />
+            <Text className="text-center my-2 text-lg font-pmedium">{(form.classEndTime === "") ? "00:00" : formatTime(form.classEndTime)}</Text>
+          </View>
         </View>
       </View>
     </>

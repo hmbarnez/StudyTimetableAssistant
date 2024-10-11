@@ -16,6 +16,7 @@ import monthview from "../assets/icons/monthview.png";
 import dayview from "../assets/icons/dayview.png";
 import lefticon from "../assets/icons/lefticon.png";
 import righticon from "../assets/icons/righticon.png";
+import clock from "../assets/icons/clock.png";
 
 export default {
   play,
@@ -36,4 +37,5 @@ export default {
   dayview,
   lefticon,
   righticon,
+  clock
 };

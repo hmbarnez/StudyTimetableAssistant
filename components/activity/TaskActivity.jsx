@@ -2,8 +2,14 @@ import React from "react";
 import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import CustomDatePicker from "./CustomDatePicker";
+import CustomTimePicker from "./CustomTimePicker";
 
-const TaskActivity = ({ form, handleInputChange, toggleOccurs }) => {
+const TaskActivity = ({
+  form,
+  handleInputChange,
+  toggleOccurs,
+  formatTime,
+}) => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [taskDate, setTaskDate] = useState(""); //for one time task
@@ -12,6 +18,8 @@ const TaskActivity = ({ form, handleInputChange, toggleOccurs }) => {
       <View>
         <Text className="text-l font-psemibold">Title</Text>
         <TextInput
+          id="taskTitle"
+          name="taskTitle"
           placeholder="Task Title"
           value={form.taskTitle}
           onChangeText={(value) => handleInputChange("taskTitle", value)}
@@ -22,12 +30,14 @@ const TaskActivity = ({ form, handleInputChange, toggleOccurs }) => {
       <View>
         <Text className="text-l font-psemibold mt-2">Details</Text>
         <TextInput
+          id="taskDescription"
+          name="taskDescription"
           placeholder="Task description"
           value={form.taskDescription}
           onChangeText={(value) => handleInputChange("taskDescription", value)}
           className={`text-[#61677D] font-pregular border border-gray-300 rounded p-2 mt-2 h-${
-              form.taskOccurs === "Once" ? 28 : 28
-            }`} // changes height based on taskOccurs right now just keeping it static, can change later
+            form.taskOccurs === "Once" ? 28 : 28
+          }`} // changes height based on taskOccurs right now just keeping it static, can change later
           multiline // Added multiline for better input experience
         />
       </View>
@@ -89,26 +99,36 @@ const TaskActivity = ({ form, handleInputChange, toggleOccurs }) => {
           <View className="flex-row justify-between mt-2">
             <View className="flex-1 mr-2">
               <Text className="text-l font-psemibold">Start Time</Text>
-              <TextInput
-                placeholder="Time"
-                value={form.taskStartTime}
-                onChangeText={(value) =>
-                  handleInputChange("taskStartTime", value)
-                }
-                className="text-[#61677D] font-pregular border border-gray-300 rounded p-2 mt-1"
-              />
+              <View className="flex-row items-center">
+                <CustomTimePicker
+                  title={"start"}
+                  handleInputChange={handleInputChange}
+                  fieldName={"taskStartTime"}
+                  endTime={form.taskEndTime}
+                />
+                <Text className="text-center my-2 text-lg font-pmedium">
+                  {form.taskStartTime === ""
+                    ? "00:00"
+                    : formatTime(form.taskStartTime)}
+                </Text>
+              </View>
             </View>
 
-            <View className="flex-1 mr-2">
+            <View className="flex-1 ml-2">
               <Text className="text-l font-psemibold">End Time</Text>
-              <TextInput
-                placeholder="Time"
-                value={form.taskEndTime}
-                onChangeText={(value) =>
-                  handleInputChange("taskEndTime", value)
-                }
-                className="text-[#61677D] font-pregular border border-gray-300 rounded p-2 mt-1"
-              />
+              <View className="flex-row items-center">
+                <CustomTimePicker
+                  title={"end"}
+                  handleInputChange={handleInputChange}
+                  fieldName={"taskEndTime"}
+                  startTime={form.taskStartTime}
+                />
+                <Text className="text-center my-2 text-lg font-pmedium">
+                  {form.taskEndTime === ""
+                    ? "00:00"
+                    : formatTime(form.taskEndTime)}
+                </Text>
+              </View>
             </View>
           </View>
         </>
@@ -147,6 +167,8 @@ const TaskActivity = ({ form, handleInputChange, toggleOccurs }) => {
           <View className="flex-1 mr-2">
             <Text className="text-l font-psemibold">Days</Text>
             <TextInput
+              id="taskDays"
+              name="taskDays"
               placeholder="Days"
               value={form.taskDays}
               onChangeText={(value) => handleInputChange("taskDays", value)}
@@ -157,26 +179,36 @@ const TaskActivity = ({ form, handleInputChange, toggleOccurs }) => {
           <View className="flex-row justify-between mt-2">
             <View className="flex-1 mr-2">
               <Text className="text-l font-psemibold">Start Time</Text>
-              <TextInput
-                placeholder="Time"
-                value={form.taskStartTime}
-                onChangeText={(value) =>
-                  handleInputChange("taskStartTime", value)
-                }
-                className="text-[#61677D] font-pregular border border-gray-300 rounded p-2 mt-1"
-              />
+              <View className="flex-row items-center">
+                <CustomTimePicker
+                  title={"start"}
+                  handleInputChange={handleInputChange}
+                  fieldName={"taskStartTime"}
+                  endTime={form.taskEndTime}
+                />
+                <Text className="text-center my-2 text-lg font-pmedium">
+                  {form.taskStartTime === ""
+                    ? "00:00"
+                    : formatTime(form.taskStartTime)}
+                </Text>
+              </View>
             </View>
 
-            <View className="flex-1 mr-2">
+            <View className="flex-1 ml-2">
               <Text className="text-l font-psemibold">End Time</Text>
-              <TextInput
-                placeholder="Time"
-                value={form.taskEndTime}
-                onChangeText={(value) =>
-                  handleInputChange("taskEndTime", value)
-                }
-                className="text-[#61677D] font-pregular border border-gray-300 rounded p-2 mt-1"
-              />
+              <View className="flex-row items-center">
+                <CustomTimePicker
+                  title={"end"}
+                  handleInputChange={handleInputChange}
+                  fieldName={"taskEndTime"}
+                  startTime={form.taskStartTime}
+                />
+                <Text className="text-center my-2 text-lg font-pmedium">
+                  {form.taskEndTime === ""
+                    ? "00:00"
+                    : formatTime(form.taskEndTime)}
+                </Text>
+              </View>
             </View>
           </View>
         </>
