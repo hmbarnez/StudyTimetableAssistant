@@ -9,6 +9,7 @@ import { icons } from '../../constants'
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import app from '../../firebaseConfig';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const SignUp = () => {
@@ -56,7 +57,10 @@ const SignUp = () => {
       console.log("User added to Firestore: ", user.uid);
 
       // Store userId in session storage
-      sessionStorage.setItem('userId', user.uid);
+      // sessionStorage.setItem('userId', user.uid);
+      // Store userId using AsyncStorage
+      await AsyncStorage.setItem('userId', user.uid);
+
       // Navigate to account creation(get started) 
       router.navigate('/(start)/account-creation', { userId: user.uid });
     } catch (error) {

@@ -89,13 +89,13 @@ const Activity = () => {
           <Text className="text-2xl font-pbold p-4">New Activity</Text>
           <View className="bg-[#4DC59120] rounded-md p-2 px-3 flex-row space-x-4">
             <TouchableOpacity onPress={() => setActivityType('Exams')}>
-              <Text className={`text-[#4DC591] font-semibold ${activityType === 'Exams' && 'underline'}`}>Exams</Text>
+              <Text className={`text-[#4DC591] font-psemibold ${activityType === 'Exams' && 'underline'}`}>Exams</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setActivityType('Classes')}>
-              <Text className={`text-[#4DC591] font-semibold ${activityType === 'Classes' && 'underline'}`}>Classes</Text>
+              <Text className={`text-[#4DC591] font-psemibold ${activityType === 'Classes' && 'underline'}`}>Classes</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setActivityType('Tasks')}>
-              <Text className={`text-[#4DC591] font-semibold ${activityType === 'Tasks' && 'underline'}`}>Tasks</Text>
+              <Text className={`text-[#4DC591] font-psemibold ${activityType === 'Tasks' && 'underline'}`}>Tasks</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -122,13 +122,13 @@ const Activity = () => {
               onPress={saveActivity}
               className="bg-[#4DC591] rounded p-3 w-1/3 items-center"
             >
-              <Text className="text-[#00664F] font-semibold">Save</Text>
+              <Text className="text-[#00664F] font-psemibold">Save</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={cancelActivity}
               className="bg-[#00664F] rounded p-3 w-1/3 items-center"
             >
-              <Text className="text-[#4DC591] font-semibold">Cancel</Text>
+              <Text className="text-[#4DC591] font-psemibold">Cancel</Text>
             </TouchableOpacity>
           </View>
         </View>

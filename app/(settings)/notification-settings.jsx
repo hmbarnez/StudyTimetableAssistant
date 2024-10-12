@@ -4,7 +4,7 @@ import React from 'react'
 const NotificationSettings = () => {
   return (
     <View>
-      <Text>Notifications</Text>
+      <Text className={"items-center"}>Notifications</Text>
     </View>
   )
 }

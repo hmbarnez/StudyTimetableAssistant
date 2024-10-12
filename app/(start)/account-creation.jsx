@@ -3,17 +3,32 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import React,{ useState, useEffect }  from 'react';
 import AuthButton from '../../components/AuthButton';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 const AccountCreation = () => {
-
   const navigation = useNavigation();
+  const [userId, setUserId] = useState(null); // State to hold the userId
 
-  // Retrieve userId from session storage
-  const userId = sessionStorage.getItem('userId');
+  // useEffect to retrieve userId from AsyncStorage on component mount
+  useEffect(() => {
+    const getUserIdFromStorage = async () => {
+      try {
+        const storedUserId = await AsyncStorage.getItem('userId');
+        if (storedUserId) {
+          setUserId(storedUserId);
+          console.log("UserID retrieved from AsyncStorage:", storedUserId);
+        } else {
+          console.log("No userId found in AsyncStorage.");
+        }
+      } catch (e) {
+        console.error('Failed to fetch userId from AsyncStorage', e);
+      }
+    };
 
-
-  console.log("UserID on AccountCreation:", userId);
+    getUserIdFromStorage();
+  }, []);
 
   const navigateToForm = () => {
     // Directly navigate to the account form page
