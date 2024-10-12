@@ -24,7 +24,7 @@ const SignIn = () => {
       router.push('/home'); // Redirect to the profile page after successful sign-in
     } catch (err) {
       console.error('Sign in error:', err.message);
-      setError(err.message); // Display error if sign-in fails
+      setError("Sign-in Failed. Please try again with the correct credentials of an Existing Account"); // Display error if sign-in fails
     }
   };
 

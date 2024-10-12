@@ -1,9 +1,9 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, Platform, Alert } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import logo from '../../assets/images/logo.png';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { getAuth, signOut } from 'firebase/auth';
-import { getFirestore, doc, getDoc } from 'firebase/firestore'; // Import Firestore functions
+import { getAuth, signOut, deleteUser, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
+import { getFirestore, doc, getDoc, deleteDoc } from 'firebase/firestore';
 import { router } from 'expo-router';
 
 const Profile = () => {
@@ -12,51 +12,88 @@ const Profile = () => {
 
   useEffect(() => {
     const auth = getAuth();
-    const currentUser = auth.currentUser; // Fetch the current user
+    const currentUser = auth.currentUser;
     if (currentUser) {
-      setUser(currentUser);  // Set the user data if logged in
-      
+      setUser(currentUser);
       const fetchUserDetails = async () => {
         const db = getFirestore();
-        const userDoc = doc(db, 'Users', currentUser.uid); // Reference to user document
-        const docSnap = await getDoc(userDoc); // Fetch document
-        
+        const userDoc = doc(db, 'Users', currentUser.uid);
+        const docSnap = await getDoc(userDoc);
         if (docSnap.exists()) {
-          setUserDetails(docSnap.data()); // Set user details from Firestore
+          setUserDetails(docSnap.data());
         } else {
           console.error('No such document!');
         }
       };
-      
-      fetchUserDetails(); // Call the function to fetch user details
+      fetchUserDetails();
     } else {
       console.error('No user is signed in');
     }
   }, []);
 
-  // Navigate to the Account Settings page when the button is clicked
-  const goToAccountSettings = () => {
-    router.push('/account-settings'); //
+  const handleDeleteAccount = async () => {
+    console.log("Delete account button pressed");
+
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+
+    if (Platform.OS === 'web') {
+      // Use window.prompt for web to request password
+      const password = window.prompt('Please enter your password to confirm the deletion of your account.');
+
+      if (password) {
+        try {
+          // Reauthenticate the user using Email and Password
+          const credential = EmailAuthProvider.credential(currentUser.email, password);
+          await reauthenticateWithCredential(currentUser, credential);
+
+          // Proceed with account deletion
+          const db = getFirestore();
+          const userDoc = doc(db, 'Users', currentUser.uid);
+          await deleteDoc(userDoc); // Remove user data from Firestore
+          await deleteUser(currentUser); // Delete user from Firebase Auth
+          console.log('User account deleted');
+          router.push('/starting'); // Redirect to starting screen
+        } catch (error) {
+          console.error('Error during reauthentication or account deletion:', error);
+          alert('Reauthentication Failed: The password entered is incorrect. Please try again.');
+        }
+      }
+    } else {
+      // Mobile Reauthentication using Alert.prompt
+      Alert.prompt(
+        'Reauthenticate',
+        'Please enter your password to confirm the deletion of your account.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { 
+            text: 'Delete', 
+            style: 'destructive',
+            onPress: async (inputPassword) => {
+              try {
+                // Reauthenticate the user using Email and Password
+                const credential = EmailAuthProvider.credential(currentUser.email, inputPassword); 
+                await reauthenticateWithCredential(currentUser, credential);
+
+                // Proceed with account deletion
+                const db = getFirestore();
+                const userDoc = doc(db, 'Users', currentUser.uid);
+                await deleteDoc(userDoc); // Remove user data from Firestore
+                await deleteUser(currentUser); // Delete user from Firebase Auth
+                console.log('User account deleted');
+                router.push('/starting'); // Redirect to starting screen
+              } catch (error) {
+                console.error('Error during reauthentication or account deletion:', error);
+                Alert.alert('Reauthentication Failed', 'The password entered is incorrect. Please try again.');
+              }
+            }
+          }
+        ],
+        'secure-text'
+      );
+    }
   };
 
-  const goToNotificationSettings = () => {
-    router.push('/notification-settings'); //
-  };
-  const goTofeedback = () => {
-    router.push('/feedback'); //
-  };
-  // Handle user logout
-  const handleLogout = () => {
-    const auth = getAuth();
-    signOut(auth)
-      .then(() => {
-        console.log('User signed out');
-        router.push('/starting'); // Redirect to login screen after logout
-      })
-      .catch((error) => {
-        console.error('Error signing out:', error);
-      });
-  };
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
@@ -76,15 +113,15 @@ const Profile = () => {
         {/* Settings Section */}
         <View style={styles.settingsSection}>
           <Text style={styles.settingsHeading}>Settings</Text>
-          <TouchableOpacity style={styles.settingOption} onPress={goToAccountSettings}>
+          <TouchableOpacity style={styles.settingOption} onPress={() => router.push('/account-settings')}>
             <Text>Account Settings</Text>
             <Text style={styles.arrow}>›</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.settingOption} onPress={goToNotificationSettings}>
+          <TouchableOpacity style={styles.settingOption} onPress={() => router.push('/notification-settings')}>
             <Text>Notification Settings</Text>
             <Text style={styles.arrow}>›</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.settingOption} onPress={goTofeedback}>
+          <TouchableOpacity style={styles.settingOption} onPress={() => router.push('/feedback')}>
             <Text>Feedback</Text>
             <Text style={styles.arrow}>›</Text>
           </TouchableOpacity>
@@ -92,17 +129,17 @@ const Profile = () => {
 
         {/* Bottom Buttons */}
         <View style={styles.bottomButtons}>
-          <TouchableOpacity style={styles.deleteButton}>
+          <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteAccount}>
             <Text style={styles.deleteButtonText}>Delete my account</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <TouchableOpacity style={styles.logoutButton} onPress={() => signOut(getAuth()).then(() => router.push('/starting'))}>
             <Text style={styles.logoutButtonText}>Log out</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -181,6 +218,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
   },
-})
+});
 
 export default Profile;
