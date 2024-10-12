@@ -10,6 +10,7 @@ import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import app from '../../firebaseConfig';
 
+
 const SignUp = () => {
 
   const [form, setform] = useState({
@@ -54,8 +55,10 @@ const SignUp = () => {
 
       console.log("User added to Firestore: ", user.uid);
 
-      // Navigate to sign-in or home screen after successful signup
-      router.push('/(tabs)/home');
+      // Store userId in session storage
+      sessionStorage.setItem('userId', user.uid);
+      // Navigate to account creation(get started) 
+      router.navigate('/(start)/account-creation', { userId: user.uid });
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
