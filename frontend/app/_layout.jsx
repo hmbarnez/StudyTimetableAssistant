@@ -43,14 +43,8 @@ const RootLayout = () => {
         <Stack.Screen name="index" options={{ title: 'Home', headerShown: false}}/>
         <Stack.Screen name="(auth)" options={{ headerShown: false}}/>
         <Stack.Screen name="(tabs)" options={{ headerShown: false}}/>
-<<<<<<< HEAD:app/_layout.jsx
-        <Stack.Screen name="(start)" options={{ headerShown: false }} />
-        <Stack.Screen name="(settings)" options={{ headerShown: false }} />
-
-=======
         <Stack.Screen name="(start)" options={{ headerShown: false}}/>
         <Stack.Screen name="(settings)" options={{ headerShown: false}}/>
->>>>>>> b062798bbb29039f312b691b258946ea7f439710:frontend/app/_layout.jsx
     </Stack>
   )
 }
