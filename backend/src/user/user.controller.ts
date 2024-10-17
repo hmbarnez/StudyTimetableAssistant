@@ -1,26 +1,35 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
-import { FirebaseService } from '../firebase/firebase.service';
+import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
+import { UserService } from './user.service';
+import { UserEntity } from './user.entity';
 
 @Controller('users')
 export class UserController {
-  constructor(private readonly firebaseService: FirebaseService) { }
+  constructor(private readonly usersService: UserService) { }
 
-  @Get()
-  async getUsers() {
-    return await this.firebaseService.getAllUsers();
+  // Create a new user
+  @Post()
+  async createUser(@Body() userData: Partial<UserEntity>): Promise<UserEntity> {
+    return this.usersService.createUser(userData);
   }
 
-  @Post('login')
-  async login(@Body('email') email: string, @Body('password') password: string) {
-    const userId = await this.firebaseService.loginUser(email, password);
-    return { userId };  // Return the user ID if login successful
-  }
-
+  // Get a user by ID
   @Get(':id')
-  async getUser(@Param('id') id: string) {
-    return await this.firebaseService.getUserById(id);
+  async getUserById(@Param('id') id: string): Promise<UserEntity> {
+    return this.usersService.getUserById(id);
   }
 
+  // Update an existing user
+  @Put(':id')
+  async updateUser(
+    @Param('id') id: string,
+    @Body() updatedData: Partial<UserEntity>,
+  ): Promise<void> {
+    return this.usersService.updateUser(id, updatedData);
+  }
 
-
+  // Delete a user by ID
+  @Delete(':id')
+  async deleteUser(@Param('id') id: string): Promise<void> {
+    return this.usersService.deleteUser(id);
+  }
 }

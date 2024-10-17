@@ -182,13 +182,57 @@ export class EventsService {
     }
   }
 
-  async deleteEvent(): Promise<void> {
+  async deleteEvent(userId: string, eventId: string, date: string): Promise<void> {
+    // Get the event using the getEvent method
+    const event = await this.getEvent(userId, eventId, date);
 
+    if (!event) {
+      throw new Error(`Event with ID ${eventId} on date ${date} not found.`);
+    }
+
+    // Retrieve the user document reference
+    const userRef = this.firestore.collection('users').doc(userId);
+    const userSnapshot = await userRef.get();
+    const userData = userSnapshot.data();
+    const schedule = userData.schedule;
+
+    // Find the event and remove it from the appropriate section (classes, exams, tasks)
+    const { classes, exams, tasks } = schedule[date];
+
+    if (event.type === 'class') {
+      schedule[date].classes = classes.filter(e => e.id !== eventId);
+    } else if (event.type === 'exam') {
+      schedule[date].exams = exams.filter(e => e.id !== eventId);
+    } else if (event.type === 'task') {
+      schedule[date].tasks = tasks.filter(e => e.id !== eventId);
+    }
+
+    // Update the Firestore document
+    await userRef.update({ schedule });
   }
 
-  async deleteFutureEvent(): Promise<void> {
+  async deleteFutureEvent(userId: string, eventId: string, date: string): Promise<void> {
+    //Get the event using the getEvent method
+    const event = await this.getEvent(userId, eventId, date);
 
+    if (!event) {
+      throw new Error(`Event with ID ${eventId} on date ${date} not found.`);
+    }
+
+    //Generate all future dates where the event repeats based on the pattern
+    const futureDates = this.generateFutureDates(date, event.endingDate, event.eventDays);
+
+    // Iterate over all future dates and delete the event for each date
+    for (const futureDate of futureDates) {
+      try {
+        // Use the existing deleteEvent method to delete each future event
+        await this.deleteEvent(userId, eventId, futureDate);
+      } catch (error) {
+        console.error(`Error deleting event on date ${futureDate}:`, error.message);
+      }
+    }
   }
+
 
   generateFutureDates(startingDate: string, endingDate: string, eventDays: string[]): string[] {
     const start = moment(startingDate, 'YYYY-MM-DD'); // Parse the starting date

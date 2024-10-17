@@ -1,6 +1,7 @@
-import { Controller, Post, Param, Body, Get, Patch } from '@nestjs/common';
+import { Controller, Post, Param, Body, Get, Patch, Delete } from '@nestjs/common';
 import { EventEntity } from './event.entity';
 import { EventsService } from './events.service';
+
 
 @Controller('events')
 export class EventsController {
@@ -57,5 +58,28 @@ export class EventsController {
 
     }
 
+    @Delete(':userId/date/:date/event/:eventId')
+    async deleteEvent(
+        @Param('userId') userId: string,
+        @Param('eventId') eventId: string,
+        @Param('date') date: string,
+    ) {
+
+        await this.eventsService.deleteEvent(userId, eventId, date);
+        return { message: 'Event updated successfully' };
+
+    }
+
+    @Delete(':userId/date/:date/event/:eventId/future')
+    async deleteFutureEvents(
+        @Param('userId') userId: string,
+        @Param('eventId') eventId: string,
+        @Param('date') date: string,
+    ) {
+
+        await this.eventsService.deleteFutureEvent(userId, eventId, date);
+        return { message: 'Event updated successfully' };
+
+    }
 
 }

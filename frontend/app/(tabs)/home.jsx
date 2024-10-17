@@ -6,54 +6,9 @@ import { Content } from '../../components/home/HomeContent'
 
 const Home = () => {
   const [activeTab, setActiveTab] = useState('Classes');
-  const [classes, setClasses] = useState([
-    {
-      subjectName: 'Introduction to Networking',
-      subject: 'ITEC 2000',
-      classRoom: 'Room 2210, Building A',
-      startingTime: '9:30',
-      endingTime: '10:30'
-    },
-    {
-      subjectName: 'Introduction to Networking',
-      subject: 'ITEC 2000',
-      classRoom: 'Room 2210, Building A',
-      startingTime: '9:30',
-      endingTime: '10:30'
-    }
-  ])
-  const [tasks, setTasks] = useState([
-    {
-      subjectName: 'Introduction to Networking',
-      subject: 'ITEC 4000',
-      classRoom: 'Room 2210, Building A',
-      startingTime: '9:30',
-      endingTime: '10:30'
-    },
-    {
-      subjectName: 'Introduction to Networking',
-      subject: 'ITEC 2000',
-      classRoom: 'Room 2210, Building A',
-      startingTime: '9:30',
-      endingTime: '10:30'
-    }
-  ])
-  const [exams, setExams] = useState([
-    {
-      subjectName: 'Introduction to Networking',
-      subject: 'ITEC 3000',
-      classRoom: 'Room 2210, Building A',
-      startingTime: '9:30',
-      endingTime: '10:30'
-    },
-    {
-      subjectName: 'Introduction to Networking',
-      subject: 'ITEC 2000',
-      classRoom: 'Room 2210, Building A',
-      startingTime: '9:30',
-      endingTime: '10:30'
-    }
-  ])
+  const [classes, setClasses] = useState([])
+  const [tasks, setTasks] = useState([])
+  const [exams, setExams] = useState([])
 
   const getContentForTab = () => {
     switch (activeTab) {
