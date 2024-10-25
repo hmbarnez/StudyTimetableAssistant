@@ -164,7 +164,6 @@ export class EventsService {
     await userRef.update({ schedule });
   }
 
-
   async updateFutureEvent(userId: string, eventId: string, date: string, updatedData: Partial<EventEntity>): Promise<void> {
     const event = await this.getEvent(userId, eventId, date);
 

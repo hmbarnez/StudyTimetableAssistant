@@ -1,35 +1,42 @@
-import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Delete } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserEntity } from './user.entity';
 
 @Controller('users')
 export class UserController {
-  constructor(private readonly usersService: UserService) { }
+  constructor(private readonly userService: UserService) { }
 
-  // Create a new user
-  @Post()
-  async createUser(@Body() userData: Partial<UserEntity>): Promise<UserEntity> {
-    return this.usersService.createUser(userData);
+  @Post('login')
+  async login(
+    @Body('email') email: string,
+    @Body('password') password: string
+  ): Promise<Omit<UserEntity, 'password'>> {
+    return this.userService.loginUser(email, password);
   }
 
-  // Get a user by ID
+  @Post('logout')
+  async logout(): Promise<string> {
+    return this.userService.logoutUser();
+  }
+
+  @Post('signup')
+  async signUp(
+    @Body() userData: Partial<UserEntity>,
+    @Body('password') password: string
+  ): Promise<Omit<UserEntity, 'password'>> {
+    return this.userService.signUp(userData, password);
+  }
+
   @Get(':id')
   async getUserById(@Param('id') id: string): Promise<UserEntity> {
-    return this.usersService.getUserById(id);
+    return this.userService.getUserById(id);
   }
 
-  // Update an existing user
-  @Put(':id')
-  async updateUser(
-    @Param('id') id: string,
-    @Body() updatedData: Partial<UserEntity>,
-  ): Promise<void> {
-    return this.usersService.updateUser(id, updatedData);
-  }
-
-  // Delete a user by ID
   @Delete(':id')
-  async deleteUser(@Param('id') id: string): Promise<void> {
-    return this.usersService.deleteUser(id);
+  async deleteUser(
+    @Param('id') id: string,
+    @Body('password') password: string
+  ): Promise<void> {
+    return this.userService.deleteUser(id, password);
   }
 }

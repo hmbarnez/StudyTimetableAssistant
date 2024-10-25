@@ -9,28 +9,58 @@ export class UserService {
   private firestore: Firestore;
 
   constructor() {
-    this.firestore = admin.firestore();;
+    this.firestore = admin.firestore();
   }
 
-  // Create a new user
-  async createUser(userData: Partial<UserEntity>): Promise<UserEntity> {
+  // Create a new user (sign-up)
+  async signUp(userData: Partial<UserEntity>, password: string): Promise<Omit<UserEntity, 'password'>> {
     const newUserRef = this.firestore.collection('users').doc();
+    const hashedPassword = await this.hashPassword(password);
 
-    const hashedPassword = await this.hashPassword(userData.password);
-
+    // Store password separately
     const newUser = {
       ...userData,
       id: newUserRef.id,
-      password: hashedPassword, // Store the hashed password
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      password: hashedPassword, // Password is stored in Firestore, but not part of UserEntity
     };
 
     await newUserRef.set(newUser);
-    return newUser as UserEntity;
+
+    // Omit the password before returning the user data
+    const { password: _password, ...userWithoutPassword } = newUser;
+    return userWithoutPassword as UserEntity;
   }
 
-  // Read (Retrieve) a user by ID
+  // Login user with email and password
+  async loginUser(email: string, password: string): Promise<Omit<UserEntity, 'password'> | null> {
+    const userSnapshot = await this.firestore.collection('users')
+      .where('email', '==', email)
+      .limit(1)
+      .get();
+
+    if (userSnapshot.empty) {
+      throw new Error('User with this email does not exist.');
+    }
+
+    const userDoc = userSnapshot.docs[0];
+    const userData = userDoc.data() as UserEntity & { password: string }; // Extend to include password
+
+    const passwordMatches = await this.comparePassword(password, userData.password);
+    if (!passwordMatches) {
+      throw new Error('Invalid credentials.');
+    }
+
+    // Return the user data without the password
+    const { password: _password, ...userWithoutPassword } = userData;
+    return userWithoutPassword as UserEntity;
+  }
+
+  // Logout user (typically handled client-side)
+  async logoutUser(): Promise<string> {
+    return 'User logged out successfully.';
+  }
+
+  // Get user by ID
   async getUserById(userId: string): Promise<UserEntity> {
     const userRef = this.firestore.collection('users').doc(userId);
     const userSnapshot = await userRef.get();
@@ -57,9 +87,22 @@ export class UserService {
     });
   }
 
-  // Delete a user by ID
-  async deleteUser(userId: string): Promise<void> {
+  // Delete a user by ID and password
+  async deleteUser(userId: string, password: string): Promise<void> {
     const userRef = this.firestore.collection('users').doc(userId);
+    const userSnapshot = await userRef.get();
+
+    if (!userSnapshot.exists) {
+      throw new Error(`User with ID ${userId} does not exist.`);
+    }
+
+    const userData = userSnapshot.data() as UserEntity & { password: string };
+
+    const passwordMatches = await this.comparePassword(password, userData.password);
+    if (!passwordMatches) {
+      throw new Error('Invalid password.');
+    }
+
     await userRef.delete();
   }
 
@@ -72,5 +115,9 @@ export class UserService {
   private async hashPassword(password: string): Promise<string> {
     const saltRounds = 10;
     return bcrypt.hash(password, saltRounds);
+  }
+
+  private async comparePassword(plainPassword: string, hashedPassword: string): Promise<boolean> {
+    return bcrypt.compare(plainPassword, hashedPassword);
   }
 }

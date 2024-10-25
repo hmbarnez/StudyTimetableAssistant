@@ -25,7 +25,6 @@ const Home = () => {
 
   return (
     <View className="bg-white flex-1 ">
-      {/* <DataBar></DataBar> */}
       <DateBar></DateBar>
       <TabBar tabs={[
         { name: 'Classes', count: classes.length },

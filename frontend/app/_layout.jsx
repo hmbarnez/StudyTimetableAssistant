@@ -4,6 +4,8 @@ import { SplashScreen, Stack } from 'expo-router'
 import { NativeWindStyleSheet } from "nativewind";
 import { useFonts } from 'expo-font';
 import { useEffect } from 'react';
+import { Provider } from 'react-redux';
+import store from './redux/store';
 
 //necessary for native wind to work
 NativeWindStyleSheet.setOutput({
@@ -39,13 +41,15 @@ const RootLayout = () => {
   }
 
   return (
-    <Stack>
-        <Stack.Screen name="index" options={{ title: 'Home', headerShown: false}}/>
-        <Stack.Screen name="(auth)" options={{ headerShown: false}}/>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false}}/>
-        <Stack.Screen name="(start)" options={{ headerShown: false}}/>
-        <Stack.Screen name="(settings)" options={{ headerShown: false}}/>
-    </Stack>
+    <Provider store={store}>
+      <Stack>
+        <Stack.Screen name="index" options={{ title: 'Home', headerShown: false }} />
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(start)" options={{ headerShown: false }} />
+        <Stack.Screen name="(settings)" options={{ headerShown: false }} />
+      </Stack>
+    </Provider>
   )
 }
 

@@ -23,7 +23,7 @@ export default function App() {
         onAuthStateChanged(auth, (user) => {
           if (user) {
             console.log("User is signed in:", user);
-            setIsAuthenticated(true);
+            // setIsAuthenticated(true);
           } else {
             console.log("No user is signed in.");
             setIsAuthenticated(false);
@@ -42,7 +42,8 @@ export default function App() {
     if (!loading) {
       const timer = setTimeout(() => {
         if (isAuthenticated) {
-          router.push('/(tabs)/home');  // Assuming HomeScreen is for authenticated users
+          router.push('/(tabs)/home');
+          // Assuming HomeScreen is for authenticated users
         } else {
           router.push('/(auth)/starting');  // Assuming StartingScreen is for non-authenticated users
         }

@@ -1,37 +1,36 @@
-import { View, Text , TouchableOpacity, Image } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import React, { useState } from 'react'
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth' // Import Firebase Auth functions
-import AuthFormField from '../../components/AuthFormField'
-import AuthButton from '../../components/AuthButton'
-import { router, Link } from 'expo-router'
+import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useState } from 'react';
+import AuthFormField from '../../components/AuthFormField';
+import AuthButton from '../../components/AuthButton';
+import { router } from 'expo-router';
+import { login, setLoading, setError } from '../redux/reducers/userReducer';
+import { loginUser } from '../services/authAPI';
 import { icons } from '../../constants'
+import { useDispatch } from 'react-redux';
 
 const SignIn = () => {
-  const [form, setForm] = useState({
-    email: '',
-    password: ''
-  });
+  const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
+  const dispatch = useDispatch();
 
-  // Handle sign in
   const submit = async () => {
-    const auth = getAuth(); // Get Firebase Auth instance
+    dispatch(setLoading());
+
     try {
-      // Sign in with email and password
-      await signInWithEmailAndPassword(auth, form.email, form.password);
-      console.log('User signed in');
-      router.push('/home'); // Redirect to the profile page after successful sign-in
+      const userData = await loginUser(form.email, form.password);
+      dispatch(login(userData)); // Dispatch the login action with user data
+      router.push('/home'); // Redirect to home after successful login
     } catch (err) {
-      console.error('Sign in error:', err.message);
-      setError("Sign-in Failed. Please try again with the correct credentials of an Existing Account"); // Display error if sign-in fails
+      console.error('Sign in error:', err.response ? err.response.data.message : err.message);
+      setError(err.response ? err.response.data.message : 'An error occurred'); // Set error message to display
     }
   };
 
   return (
     <SafeAreaView className="bg-[#4DC591] h-full">
       <View>
-        <TouchableOpacity onPress={() => {router.back()}}>
+        <TouchableOpacity onPress={() => router.back()}>
           <Image source={icons.lefticon} className="w-6 h-6 mt-10 ml-5" />
         </TouchableOpacity>
       </View>
@@ -40,46 +39,34 @@ const SignIn = () => {
           <Text className="text-black text-4xl text-semibold mt-10 font-psemibold text-center">
             Log in with email
           </Text>
-
           <AuthFormField
             title="Email"
-            placeholder={'Email'}
+            placeholder="Email"
             value={form.email}
-            handleChangeText={(e) => setForm({...form, email: e})}
+            handleChangeText={(e) => setForm({ ...form, email: e })}
             otherStyles="mt-7"
             keyBoardType="email-address"
           />
           <AuthFormField
-            title='Password'
-            placeholder={'Password'}
+            title="Password"
+            placeholder="Password"
             value={form.password}
-            handleChangeText={(e) => setForm({...form, password: e})}
+            handleChangeText={(e) => setForm({ ...form, password: e })}
             otherStyles="mt-4"
             secureTextEntry
           />
-
-          {/* Display error message if sign-in fails */}
           {error ? <Text style={{ color: 'red', marginTop: 10 }}>{error}</Text> : null}
-
-          <View className="justify-end pt-5 px-5 flex-row gap-2">
-            <Text>
-              <Link className="text-base text-secondary font-pregular" href='/forgot-password'>
-                Forgot Password?
-              </Link>
-            </Text>
-          </View>
         </View>
-
         <View>
           <AuthButton
             title="Sign in"
             handlesPress={submit}
-            containerStyles={'mb-10'}
+            containerStyles="mb-10"
           />
         </View>
       </View>
     </SafeAreaView>
   );
-}
+};
 
 export default SignIn;
