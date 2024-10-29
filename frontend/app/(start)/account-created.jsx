@@ -23,9 +23,10 @@ const AccountCreated = () => {
           <Text className="text-black text-4xl text-semibold mt-10 font-psemibold text-center">
             Your account type is:
           </Text>
-          <Text className=' text-[#00664F] text-3xl font-psemibold text-center mt-10'>
-            {userType}!
-          </Text>
+
+          {userType && (
+            <Text className=' text-[#00664F] text-3xl font-psemibold text-center mt-10'>{userType}</Text>
+          )}
         </View>
         <View>
           <AuthButton

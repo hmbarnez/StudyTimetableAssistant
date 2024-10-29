@@ -1,5 +1,5 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, Platform, Alert } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
+import React, { useState } from 'react';
 import logo from '../../assets/images/logo.png';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,7 +19,7 @@ const Profile = () => {
     try {
       // Call your delete account function
       await deleteAccount(user.id, inputPassword); // Assume this function verifies the password
-      setPromptVisible(false)
+      setPromptVisible(false);
       dispatch(logout()); // Update Redux state
       router.push('/starting'); // Redirect to starting screen
     } catch (error) {
@@ -46,12 +46,18 @@ const Profile = () => {
         {/* Profile Picture and Information */}
         <View style={styles.profileSection}>
           <Image source={logo} style={styles.profileImage} />
-          <Text style={styles.profileName}>
-            {user ? `${user.firstName} ${user.lastName}` : 'Loading...'}
-          </Text>
-          <Text style={styles.profileEmail}>
-            {user ? user.email : 'Loading...'}
-          </Text>
+          {user ? (
+            <>
+              <Text style={styles.profileName}>
+                {`${user.firstName} ${user.lastName}`}
+              </Text>
+              <Text style={styles.profileEmail}>
+                {user.email}
+              </Text>
+            </>
+          ) : (
+            <Text style={styles.profileName}>Loading...</Text>
+          )}
         </View>
 
         {/* Settings Section */}

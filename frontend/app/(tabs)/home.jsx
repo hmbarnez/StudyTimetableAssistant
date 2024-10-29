@@ -6,10 +6,11 @@ import { Content } from '../../components/home/HomeContent';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSchedule } from '../redux/reducers/scheduleReducer';
 import { fetchEvents } from '../services/eventAPI';
+import { router } from 'expo-router';
 
 const Home = () => {
   const [activeTab, setActiveTab] = useState('Classes');
-  const [date, setDate] = useState('2024-10-16');
+  const [date, setDate] = useState(new Date());
   const [classes, setClasses] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [exams, setExams] = useState([]);
@@ -20,7 +21,7 @@ const Home = () => {
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
-        console.log(user.id)
+        console.log(user.id);
         const scheduleData = await fetchEvents(user.id);
         dispatch(setSchedule(scheduleData)); // Store the schedule in Redux
       } catch (error) {
@@ -33,12 +34,16 @@ const Home = () => {
 
   useEffect(() => {
     // Update state based on the active date from schedule in Redux
-    if (schedule) {
+    if (schedule && schedule[date]) {
       setClasses(schedule[date].classes || []);
-      setTasks(schedule.tasks || []);
-      setExams(schedule.exams || []);
+      setTasks(schedule[date].tasks || []);
+      setExams(schedule[date].exams || []);
+    } else {
+      setClasses([]);
+      setTasks([]);
+      setExams([]);
     }
-  }, [schedule]);
+  }, [schedule, date]);
 
   const getContentForTab = () => {
     switch (activeTab) {
@@ -55,7 +60,7 @@ const Home = () => {
 
   return (
     <View className="bg-white flex-1">
-      <DateBar />
+      <DateBar selectedDate={date} setDate={setDate} onPress={() => router.push('/schedule')} />
       <TabBar
         tabs={[
           { name: 'Classes', count: classes.length },
