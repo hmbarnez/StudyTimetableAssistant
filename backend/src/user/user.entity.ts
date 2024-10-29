@@ -3,4 +3,5 @@ export class UserEntity {
   firstName: string;
   lastName: string;
   type: string;
+  schedule: Record<string, any>;;
 }

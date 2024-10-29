@@ -3,10 +3,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import logo from '../../assets/images/logo.png';
 import { router } from 'expo-router';
-import { useDispatch, useSelector } from 'react-redux';
 
 export default function StartingScreen() {
-    const user = useSelector((state) => state.user.user);
 
     const styles = StyleSheet.create({
         buttonContainer: {

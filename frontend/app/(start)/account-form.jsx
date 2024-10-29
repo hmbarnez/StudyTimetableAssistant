@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
 import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { icons } from '../../constants';
-import { useNavigation,useRoute } from '@react-navigation/native'; 
+import { useNavigation, useRoute } from '@react-navigation/native';
 import ProgressBar from 'react-native-progress/Bar';
-import { getFirestore, doc, setDoc } from 'firebase/firestore';
-import app from '../../firebaseConfig';
-import { updateDoc } from 'firebase/firestore';
-
-
-
+import { useDispatch, useSelector } from 'react-redux';
+import { update } from '../redux/reducers/userReducer';
+import { updateUser } from '../services/userAPI';
 
 const questions = [
   {
@@ -70,12 +67,9 @@ const questions = [
 ];
 
 const AccountForm = () => {
-  const navigation = useNavigation(); 
-  const route = useRoute();
-  const { userId } = route.params;
-
-  console.log("UserID on AccountForm:", userId);
-
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const user = useSelector((state => state.user.user))
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({ A: 0, B: 0, C: 0, D: 0 });
 
@@ -95,21 +89,13 @@ const AccountForm = () => {
     const typeMap = { A: 'Focused Learner', B: 'Balanced Student', C: 'Distracted Student', D: 'Procrastinator' };
     const accountType = typeMap[maxType];
 
-
-    if (!userId) {
-      console.error("No userId available");
-      return;
-    }
-
-    const db = getFirestore(app);
-    const userDoc = doc(db, 'Users', userId);
     try {
-      await updateDoc(userDoc, { type: accountType });
-      console.log("Account type updated successfully.");
-      navigation.navigate('account-created', { accountType: typeMap[maxType] });
-
+      // Update user with the new account type
+      const updatedUser = await updateUser(user.id, { type: accountType });
+      dispatch(update(updatedUser)); // Update Redux with the user type
+      navigation.navigate('account-created', { accountType });
     } catch (error) {
-      console.error("Error updating account type: ", error);
+      console.error('Failed to update user:', error.message);
     }
   };
 
@@ -136,7 +122,7 @@ const AccountForm = () => {
 
         <ProgressBar
           progress={(currentQuestionIndex + 1) / questions.length}
-          width={null} 
+          width={null}
           color="#4DC591"
           borderWidth={0}
           borderRadius={0}

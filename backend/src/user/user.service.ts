@@ -26,7 +26,6 @@ export class UserService {
 
     await newUserRef.set(newUser);
 
-    // Omit the password before returning the user data
     const { password: _password, ...userWithoutPassword } = newUser;
     return userWithoutPassword as UserEntity;
   }
@@ -61,7 +60,7 @@ export class UserService {
   }
 
   // Get user by ID
-  async getUserById(userId: string): Promise<UserEntity> {
+  async getUserById(userId: string): Promise<Omit<UserEntity, 'password'>> {
     const userRef = this.firestore.collection('users').doc(userId);
     const userSnapshot = await userRef.get();
 
@@ -69,7 +68,10 @@ export class UserService {
       throw new Error(`User with ID ${userId} does not exist.`);
     }
 
-    return userSnapshot.data() as UserEntity;
+    const userData = userSnapshot.data() as UserEntity & { password: string }; // Extend to include password
+    const { password, ...userWithoutPassword } = userData; // Exclude password
+
+    return userWithoutPassword; // Return user data without password
   }
 
   // Update an existing user
@@ -83,7 +85,6 @@ export class UserService {
 
     await userRef.update({
       ...updatedData,
-      updatedAt: new Date(),
     });
   }
 

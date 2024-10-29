@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import AuthFormField from '../../components/AuthFormField';
 import AuthButton from '../../components/AuthButton';
 import { router } from 'expo-router';
-import { login, setLoading, setError } from '../redux/reducers/userReducer';
+import { login, setLoading } from '../redux/reducers/userReducer';
 import { loginUser } from '../services/authAPI';
 import { icons } from '../../constants'
 import { useDispatch } from 'react-redux';
@@ -20,7 +20,7 @@ const SignIn = () => {
     try {
       const userData = await loginUser(form.email, form.password);
       dispatch(login(userData)); // Dispatch the login action with user data
-      router.push('/home'); // Redirect to home after successful login
+      router.push('/(start)/account-creation'); // Redirect to home after successful login
     } catch (err) {
       console.error('Sign in error:', err.response ? err.response.data.message : err.message);
       setError(err.response ? err.response.data.message : 'An error occurred'); // Set error message to display
@@ -30,7 +30,7 @@ const SignIn = () => {
   return (
     <SafeAreaView className="bg-[#4DC591] h-full">
       <View>
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={() => router.push('starting')}>
           <Image source={icons.lefticon} className="w-6 h-6 mt-10 ml-5" />
         </TouchableOpacity>
       </View>

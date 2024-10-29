@@ -24,10 +24,14 @@ const userSlice = createSlice({
         setError(state, action) {
             state.error = action.payload;
         },
+        update(state, action) {
+            state.user = action.payload;
+            state.error = null;
+        },
     },
 });
 
 
-export const { login, logout, setLoading, setError } = userSlice.actions;
+export const { login, logout, setLoading, setError, update } = userSlice.actions;
 
 export default userSlice.reducer;

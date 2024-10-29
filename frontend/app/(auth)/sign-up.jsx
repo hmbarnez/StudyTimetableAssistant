@@ -6,10 +6,9 @@ import AuthFormField from '../../components/AuthFormField'
 import AuthButton from '../../components/AuthButton'
 import { router, Link } from 'expo-router'
 import { icons } from '../../constants'
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import { getFirestore, doc, setDoc } from 'firebase/firestore';
-import app from '../../firebaseConfig';
-
+import { useDispatch } from 'react-redux';
+import { login, setLoading, setError } from '../redux/reducers/userReducer';
+import { signUp } from '../services/authAPI'
 
 const SignUp = () => {
 
@@ -17,54 +16,28 @@ const SignUp = () => {
     firstName: '',
     lastName: '',
     email: '',
+    type: '',
     password: '',
     confirmPassword: '',
   })
+  const dispatch = useDispatch();
 
   const submit = async () => {
-    //sign up logic
-    const { firstName, lastName, email, password, confirmPassword } = form;
-
-    // Basic validation
-    if (!email || !password || !confirmPassword || !firstName || !lastName) {
-      console.error("All fields are required!");
-      return;
-    }
-    if (password !== confirmPassword) {
-      console.error("Passwords do not match!");
-      return;
-    }
-
-    const auth = getAuth(app);
+    dispatch(setLoading());
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+      // Perform the sign-up with first name, last name, email, and password
+      const userData = await signUp(form.firstName, form.lastName, form.email, form.type, form.password);
 
-      // Add user details to Firestore
-      const db = getFirestore(app);
-      const userDoc = doc(db, 'Users', user.uid);
-      await setDoc(userDoc, {
-        firstName,
-        lastName,
-        email,
-      }).then(() => {
-        console.log("User added to Firestore successfully.");
-      }).catch((error) => {
-        console.error("Error adding user to Firestore: ", error);
-      });
+      // Store the user data (like ID) in Redux so it can be accessed later for type update
+      dispatch(login(userData));
 
-      console.log("User added to Firestore: ", user.uid);
-
-      // Store userId in session storage
-      sessionStorage.setItem('userId', user.uid);
-      // Navigate to account creation(get started) 
-      router.navigate('/(start)/account-creation', { userId: user.uid });
-    } catch (error) {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.error("Error during sign-up:", errorCode, errorMessage);
+      router.push('/(start)/account-creation'); // Assuming '/select-user-type' is the route for selecting user type
+    } catch (err) {
+      console.error('Sign-up error:', err.response ? err.response.data.message : err.message);
+      setError(err.response ? err.response.data.message : 'An error occurred during sign-up');
     }
   };
+
   return (
     //change to use bg-primary later from tailwind config
     <SafeAreaView className="bg-[#4DC591] h-full">

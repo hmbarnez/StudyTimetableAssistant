@@ -27,6 +27,21 @@ export const logoutUser = async () => {
     }
 };
 
+export const signUp = async (email, firstName, lastName, type, password) => {
+    try {
+        const response = await axios.post(`${API_URL}/signup`, {
+            email,
+            firstName,
+            lastName,
+            type,
+            password,
+        });
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response?.data?.message || 'Error signing up');
+    }
+};
+
 export const deleteAccount = async (userId, password) => {
     try {
         const response = await axios.delete(`${API_URL}/${userId}`, {
