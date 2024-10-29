@@ -1,10 +1,9 @@
 import { View, Text, TouchableOpacity, Image, StyleSheet, ActivityIndicator } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { getAuth } from 'firebase/auth';
-import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
-import { router } from 'expo-router'; 
-import logo from '../../assets/images/logo.png'; 
+
+import { router } from 'expo-router';
+import logo from '../../assets/images/logo.png';
 import { ScrollView } from 'react-native';
 import AuthFormField from '../../components/AuthFormField';
 
@@ -15,68 +14,68 @@ const AccountSettings = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    const auth = getAuth();
-    const currentUser = auth.currentUser;
+  // useEffect(() => {
 
-    if (currentUser) {
-      const fetchUserDetails = async () => {
-        setLoading(true);
-        try {
-          const db = getFirestore();
-          const userDoc = doc(db, 'Users', currentUser.uid);
-          const docSnap = await getDoc(userDoc);
+  //   const currentUser = auth.currentUser;
 
-          if (docSnap.exists()) {
-            const data = docSnap.data();
-            setUserDetails(data);
-            setUpdatedDetails(data);
-            if (data.profilePic) {
-              setProfilePic(data.profilePic);
-            }
-          } else {
-            console.error('No such document!');
-          }
-        } catch (err) {
-          setError('Failed to fetch user details.');
-          console.error(err);
-        } finally {
-          setLoading(false);
-        }
-      };
+  //   if (currentUser) {
+  //     const fetchUserDetails = async () => {
+  //       setLoading(true);
+  //       try {
+  //         const db = getFirestore();
+  //         const userDoc = doc(db, 'Users', currentUser.uid);
+  //         const docSnap = await getDoc(userDoc);
 
-      fetchUserDetails();
-    }
-  }, []);
+  //         if (docSnap.exists()) {
+  //           const data = docSnap.data();
+  //           setUserDetails(data);
+  //           setUpdatedDetails(data);
+  //           if (data.profilePic) {
+  //             setProfilePic(data.profilePic);
+  //           }
+  //         } else {
+  //           console.error('No such document!');
+  //         }
+  //       } catch (err) {
+  //         setError('Failed to fetch user details.');
+  //         console.error(err);
+  //       } finally {
+  //         setLoading(false);
+  //       }
+  //     };
+
+  //     fetchUserDetails();
+  //   }
+  // }, []);
 
   const handleSaveChanges = async () => {
-    setLoading(true);
-    try {
-      const auth = getAuth();
-      const currentUser = auth.currentUser;
-      const db = getFirestore();
-      const userDoc = doc(db, 'Users', currentUser.uid);
+    // setLoading(true);
+    // try {
+    //   const auth = getAuth();
+    //   const currentUser = auth.currentUser;
+    //   const db = getFirestore();
+    //   const userDoc = doc(db, 'Users', currentUser.uid);
 
-      await updateDoc(userDoc, {
-        firstName: updatedDetails.firstName,
-        lastName: updatedDetails.lastName,
-      });
+    //   await updateDoc(userDoc, {
+    //     firstName: updatedDetails.firstName,
+    //     lastName: updatedDetails.lastName,
+    //   });
 
-      if (updatedDetails.email !== currentUser.email) {
-        await currentUser.updateEmail(updatedDetails.email);
-      }
+    //   if (updatedDetails.email !== currentUser.email) {
+    //     await currentUser.updateEmail(updatedDetails.email);
+    //   }
 
-      alert('Changes saved successfully!');
-    } catch (error) {
-      console.error('Error updating details:', error);
-      alert('Error updating details.');
-    } finally {
-      setLoading(false);
-    }
+    //   alert('Changes saved successfully!');
+    // } catch (error) {
+    //   console.error('Error updating details:', error);
+    //   alert('Error updating details.');
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   const handleCancel = () => {
-    router.back(); 
+    router.back();
   };
 
   if (loading) {
@@ -130,7 +129,7 @@ const AccountSettings = () => {
             placeholder="Email"
             value={updatedDetails.email}
             handleChangeText={(text) => setUpdatedDetails({ ...updatedDetails, email: text })}
-            editable = {false}
+            editable={false}
           />
 
         </View>

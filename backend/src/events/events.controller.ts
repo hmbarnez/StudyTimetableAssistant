@@ -34,6 +34,15 @@ export class EventsController {
         return await this.eventsService.getAllEventsForDate(userId, date);
     }
 
+    @Get(':userId')
+    async getAllEvents(@Param('userId') userId: string): Promise<{ [date: string]: { classes: any[]; exams: any[]; tasks: any[] } }> {
+        try {
+            return await this.eventsService.getAllEvents(userId);
+        } catch (error) {
+            throw new Error(`Failed to retrieve events for user with ID ${userId}: ${error.message}`);
+        }
+    }
+
     @Patch(':userId/date/:date/event/:eventId')
     async updateEvent(
         @Param('userId') userId: string,

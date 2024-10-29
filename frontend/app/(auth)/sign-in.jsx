@@ -20,7 +20,7 @@ const SignIn = () => {
     try {
       const userData = await loginUser(form.email, form.password);
       dispatch(login(userData)); // Dispatch the login action with user data
-      router.push('/(start)/account-creation'); // Redirect to home after successful login
+      router.push('/(tabs)/home'); // Redirect to home after successful login
     } catch (err) {
       console.error('Sign in error:', err.response ? err.response.data.message : err.message);
       setError(err.response ? err.response.data.message : 'An error occurred'); // Set error message to display

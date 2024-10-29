@@ -42,16 +42,15 @@ export class UserService {
     }
 
     const userDoc = userSnapshot.docs[0];
-    const userData = userDoc.data() as UserEntity & { password: string }; // Extend to include password
+    const userData = userDoc.data() as UserEntity & { password: string }; // Include password for comparison
 
     const passwordMatches = await this.comparePassword(password, userData.password);
     if (!passwordMatches) {
       throw new Error('Invalid credentials.');
     }
 
-    // Return the user data without the password
-    const { password: _password, ...userWithoutPassword } = userData;
-    return userWithoutPassword as UserEntity;
+    // Now that the password is confirmed, use getUserById to return sanitized user data
+    return this.getUserById(userDoc.id);
   }
 
   // Logout user (typically handled client-side)
@@ -60,7 +59,7 @@ export class UserService {
   }
 
   // Get user by ID
-  async getUserById(userId: string): Promise<Omit<UserEntity, 'password'>> {
+  async getUserById(userId: string): Promise<Omit<UserEntity, 'password' | 'schedule'>> {
     const userRef = this.firestore.collection('users').doc(userId);
     const userSnapshot = await userRef.get();
 
@@ -68,10 +67,10 @@ export class UserService {
       throw new Error(`User with ID ${userId} does not exist.`);
     }
 
-    const userData = userSnapshot.data() as UserEntity & { password: string }; // Extend to include password
-    const { password, ...userWithoutPassword } = userData; // Exclude password
+    const userData = userSnapshot.data() as UserEntity & { password: string; schedule: {} };
+    const { password, schedule, ...userWithoutSensitiveData } = userData;
 
-    return userWithoutPassword; // Return user data without password
+    return userWithoutSensitiveData;
   }
 
   // Update an existing user
