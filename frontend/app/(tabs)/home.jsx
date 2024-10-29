@@ -1,23 +1,44 @@
-import { View, Text } from 'react-native'
-import React, { useState } from 'react';
-import { DateBar } from '../../components/home/DateBar'
-import { TabBar } from '../../components/home/TabBar'
-import { Content } from '../../components/home/HomeContent'
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
+import { View } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { DateBar } from '../../components/home/DateBar';
+import { TabBar } from '../../components/home/TabBar';
+import { Content } from '../../components/home/HomeContent';
+import { useSelector, useDispatch } from 'react-redux';
 import { setSchedule } from '../redux/reducers/scheduleReducer';
+import { fetchEvents } from '../services/eventAPI';
 
 const Home = () => {
   const [activeTab, setActiveTab] = useState('Classes');
-  const [classes, setClasses] = useState([])
-  const [tasks, setTasks] = useState([])
-  const [exams, setExams] = useState([])
+  const [date, setDate] = useState('2024-10-16');
+  const [classes, setClasses] = useState([]);
+  const [tasks, setTasks] = useState([]);
+  const [exams, setExams] = useState([]);
   const dispatch = useDispatch();
+  const user = useSelector(state => state.user.user);
+  const schedule = useSelector(state => state.schedule);
 
-  const fetchSchedule = async () => {
-    const scheduleData = await fetchUserSchedule();
-    dispatch(setSchedule(scheduleData)); // Store the schedule in Redux
-  };
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      try {
+        console.log(user.id)
+        const scheduleData = await fetchEvents(user.id);
+        dispatch(setSchedule(scheduleData)); // Store the schedule in Redux
+      } catch (error) {
+        console.error("Failed to fetch schedule:", error);
+      }
+    };
+
+    fetchSchedule();
+  }, [dispatch]);
+
+  useEffect(() => {
+    // Update state based on the active date from schedule in Redux
+    if (schedule) {
+      setClasses(schedule[date].classes || []);
+      setTasks(schedule.tasks || []);
+      setExams(schedule.exams || []);
+    }
+  }, [schedule]);
 
   const getContentForTab = () => {
     switch (activeTab) {
@@ -33,19 +54,20 @@ const Home = () => {
   };
 
   return (
-    <View className="bg-white flex-1 ">
-      <DateBar></DateBar>
-      <TabBar tabs={[
-        { name: 'Classes', count: classes.length },
-        { name: 'Tasks', count: tasks.length },
-        { name: 'Exams', count: exams.length }
-      ]}
+    <View className="bg-white flex-1">
+      <DateBar />
+      <TabBar
+        tabs={[
+          { name: 'Classes', count: classes.length },
+          { name: 'Tasks', count: tasks.length },
+          { name: 'Exams', count: exams.length },
+        ]}
         activeTab={activeTab}
-        setActiveTab={setActiveTab} >
-      </TabBar>
-      <Content data={getContentForTab()} activeTab={activeTab}></Content>
+        setActiveTab={setActiveTab}
+      />
+      <Content data={getContentForTab()} activeTab={activeTab} />
     </View>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

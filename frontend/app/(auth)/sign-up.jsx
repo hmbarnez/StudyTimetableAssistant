@@ -26,7 +26,7 @@ const SignUp = () => {
     dispatch(setLoading());
     try {
       // Perform the sign-up with first name, last name, email, and password
-      const userData = await signUp(form.firstName, form.lastName, form.email, form.type, form.password);
+      const userData = await signUp(form.email, form.firstName, form.lastName, form.type, form.password);
 
       // Store the user data (like ID) in Redux so it can be accessed later for type update
       dispatch(login(userData));

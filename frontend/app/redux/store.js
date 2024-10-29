@@ -6,7 +6,7 @@ import scheduleSlice from './reducers/scheduleReducer'
 const store = configureStore({
     reducer: {
         user: userSlice,
-        chedule: scheduleSlice,
+        schedule: scheduleSlice,
     },
 });
 
