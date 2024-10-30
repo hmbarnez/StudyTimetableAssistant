@@ -1,12 +1,14 @@
 import axios from 'axios';
 
 // Base URL for your backend API
-const API_URL = 'http://localhost:3000/users';
+const api = axios.create({
+    baseURL: 'http://10.0.0.192:3000/users', // Use your local IP
+});
 
 // Update user function
 export const updateUser = async (id, updatedData) => {
     try {
-        const response = await axios.patch(`${API_URL}/${id}`, updatedData);
+        const response = api.patch(`/${id}`, updatedData);
         return response.data; // Return the updated user data
     } catch (error) {
         throw new Error(error.response?.data?.message || 'Error updating user');

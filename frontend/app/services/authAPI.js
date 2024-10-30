@@ -1,13 +1,14 @@
 import axios from 'axios';
 
-// Base URL for your backend API
-const API_URL = 'http://localhost:3000/users';
+const api = axios.create({
+    baseURL: 'http://10.0.0.192:3000/users', // Use your local IP
+});
 
 // Function to login a user
 export const loginUser = async (email, password) => {
     try {
 
-        const response = await axios.post(`${API_URL}/login`, {
+        const response = api.post(`/login`, {
             email,
             password,
         });
@@ -20,7 +21,7 @@ export const loginUser = async (email, password) => {
 // Function to logout a user
 export const logoutUser = async () => {
     try {
-        const response = await axios.post(`${API_URL}/logout`);
+        const response = api.post(`/logout`);
         return response.data; // You can return a message or status
     } catch (error) {
         throw new Error(error.response?.data?.message || 'Error logging out');
@@ -29,7 +30,7 @@ export const logoutUser = async () => {
 
 export const signUp = async (email, firstName, lastName, type, password) => {
     try {
-        const response = await axios.post(`${API_URL}/signup`, {
+        const response = api.post(`/signup`, {
             email,
             firstName,
             lastName,
@@ -44,7 +45,7 @@ export const signUp = async (email, firstName, lastName, type, password) => {
 
 export const deleteAccount = async (userId, password) => {
     try {
-        const response = await axios.delete(`${API_URL}/${userId}`, {
+        const response = api.delete(`/${userId}`, {
             data: { password }, // Send password in the request body
         });
         return response.data; // Return a message or status if needed
