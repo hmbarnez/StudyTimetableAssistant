@@ -10,8 +10,9 @@ export class UserController {
   async login(
     @Body('email') email: string,
     @Body('password') password: string
-  ): Promise<Omit<UserEntity, 'password'>> {
-    return this.userService.loginUser(email, password);
+  ): Promise<{ token: string; user: Omit<UserEntity, 'password'> }> {
+    const { token, user } = await this.userService.loginUser(email, password);
+    return { token, user };
   }
 
   @Post('logout')
@@ -21,10 +22,11 @@ export class UserController {
 
   @Post('signup')
   async signUp(
-    @Body() userData: Partial<UserEntity>,
+    @Body() userData: UserEntity, // Accept full UserEntity
     @Body('password') password: string
-  ): Promise<Omit<UserEntity, 'password'>> {
-    return this.userService.signUp(userData, password);
+  ): Promise<{ token: string; user: Omit<UserEntity, 'password'> }> {
+    const { token, user } = await this.userService.signUp(userData, password);
+    return { token, user };
   }
 
   @Get(':id')
@@ -38,7 +40,10 @@ export class UserController {
     @Body() updatedData: Partial<UserEntity>
   ): Promise<UserEntity> {
     await this.userService.updateUser(userId, updatedData);
-    return this.userService.getUserById(userId);
+
+    // Await the result before logging it
+    const updatedUser = await this.userService.getUserById(userId);
+    return updatedUser; // Return the updated user
   }
 
   @Delete(':id')

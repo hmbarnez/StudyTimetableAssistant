@@ -4,23 +4,24 @@ import React, { useState } from 'react';
 import AuthFormField from '../../components/AuthFormField';
 import AuthButton from '../../components/AuthButton';
 import { router } from 'expo-router';
-import { login, setLoading } from '../redux/reducers/userReducer';
+import { setLoading, setUser } from '../redux/reducers/userReducer';
 import { loginUser } from '../services/authAPI';
 import { icons } from '../../constants'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const SignIn = () => {
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const dispatch = useDispatch();
+  const user = useSelector((state => state.user.user))
 
   const submit = async () => {
     dispatch(setLoading());
-
     try {
       const userData = await loginUser(form.email, form.password);
-      dispatch(login(userData)); // Dispatch the login action with user data
-      router.push('/(tabs)/home'); // Redirect to home after successful login
+      dispatch(setUser(userData)); // Dispatch the login action with user data
+      const userId = userData ? userData.id : null;
+      router.push({ pathname: '/(tabs)/home', params: { userId } }) // Redirect to home after successful login
     } catch (err) {
       console.error('Sign in error:', err.response ? err.response.data.message : err.message);
       setError(err.response ? err.response.data.message : 'An error occurred'); // Set error message to display

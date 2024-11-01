@@ -1,12 +1,16 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import logo from '../../assets/images/logo.png';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
-import { router } from 'expo-router';
 import { logoutUser, deleteAccount } from '../services/authAPI';
 import { logout, setError } from '../redux/reducers/userReducer';
 import PasswordPrompt from '../../components/PasswordPrompt';
+import { setSchedule } from '../redux/reducers/scheduleReducer';
+import { fetchEvents } from '../services/eventAPI';
+import { fetchUser } from '../services/userAPI';
+import { router, useLocalSearchParams } from 'expo-router';
+import { setUser } from '../redux/reducers/userReducer';
 
 const Profile = () => {
   const user = useSelector((state) => state.user.user);
@@ -37,6 +41,27 @@ const Profile = () => {
       dispatch(setError(err.message));
     }
   };
+
+
+  const { userId } = useLocalSearchParams();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch user data and store it in Redux
+        const userData = await fetchUser(userId);
+        dispatch(setUser(userData));
+
+        // Fetch schedule data
+        const scheduleData = await fetchEvents(userId);
+        dispatch(setSchedule(scheduleData)); // Store schedule in Redux
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      }
+    };
+
+    if (userId) fetchData();
+  }, [dispatch, userId]);
 
   return (
     <SafeAreaView style={styles.container}>

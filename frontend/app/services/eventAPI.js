@@ -8,7 +8,7 @@ const api = axios.create({
 // Update user function
 export const fetchEvents = async (userId) => {
     try {
-        const response = api.get(`/${userId}`);
+        const response = await api.get(`/${userId}`);
         return response.data; // Return the updated user data
     } catch (error) {
         throw new Error(error.response?.data?.message || 'Error updating user');

@@ -7,7 +7,7 @@ import AuthButton from '../../components/AuthButton'
 import { router, Link } from 'expo-router'
 import { icons } from '../../constants'
 import { useDispatch } from 'react-redux';
-import { login, setLoading, setError } from '../redux/reducers/userReducer';
+import { setLoading, setError, setUser } from '../redux/reducers/userReducer';
 import { signUp } from '../services/authAPI'
 
 const SignUp = () => {
@@ -29,7 +29,7 @@ const SignUp = () => {
       const userData = await signUp(form.email, form.firstName, form.lastName, form.type, form.password);
 
       // Store the user data (like ID) in Redux so it can be accessed later for type update
-      dispatch(login(userData));
+      dispatch(setUser(userData));
 
       router.push('/(start)/account-creation'); // Assuming '/select-user-type' is the route for selecting user type
     } catch (err) {

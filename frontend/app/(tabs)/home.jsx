@@ -6,7 +6,9 @@ import { Content } from '../../components/home/HomeContent';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSchedule } from '../redux/reducers/scheduleReducer';
 import { fetchEvents } from '../services/eventAPI';
-import { router } from 'expo-router';
+import { fetchUser } from '../services/userAPI';
+import { router, useLocalSearchParams } from 'expo-router';
+import { setUser } from '../redux/reducers/userReducer';
 
 const Home = () => {
   const [activeTab, setActiveTab] = useState('Classes');
@@ -15,22 +17,27 @@ const Home = () => {
   const [tasks, setTasks] = useState([]);
   const [exams, setExams] = useState([]);
   const dispatch = useDispatch();
-  const user = useSelector(state => state.user.user);
   const schedule = useSelector(state => state.schedule);
 
+  const { userId } = useLocalSearchParams();
+
   useEffect(() => {
-    const fetchSchedule = async () => {
+    const fetchData = async () => {
       try {
-        console.log(user.id);
-        const scheduleData = await fetchEvents(user.id);
-        dispatch(setSchedule(scheduleData)); // Store the schedule in Redux
+        // Fetch user data and store it in Redux
+        const userData = await fetchUser(userId);
+        dispatch(setUser(userData));
+
+        // Fetch schedule data
+        const scheduleData = await fetchEvents(userId);
+        dispatch(setSchedule(scheduleData)); // Store schedule in Redux
       } catch (error) {
-        console.error("Failed to fetch schedule:", error);
+        console.error("Failed to fetch data:", error);
       }
     };
 
-    fetchSchedule();
-  }, [dispatch]);
+    if (userId) fetchData();
+  }, [dispatch, userId]);
 
   useEffect(() => {
     // Update state based on the active date from schedule in Redux
@@ -60,7 +67,7 @@ const Home = () => {
 
   return (
     <View className="bg-white flex-1">
-      <DateBar selectedDate={date} setDate={setDate} onPress={() => router.push('/schedule')} />
+      <DateBar selectedDate={date} setDate={setDate} onPress={() => router.push({ pathname: '/schedule', params: { userId } })} />
       <TabBar
         tabs={[
           { name: 'Classes', count: classes.length },

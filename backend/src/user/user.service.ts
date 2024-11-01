@@ -3,6 +3,7 @@ import { Firestore } from '@google-cloud/firestore';
 import { UserEntity } from './user.entity';
 import * as bcrypt from 'bcrypt';
 import * as admin from 'firebase-admin';
+import { sign } from 'jsonwebtoken';
 
 @Injectable()
 export class UserService {
@@ -13,44 +14,46 @@ export class UserService {
   }
 
   // Create a new user (sign-up)
-  async signUp(userData: Partial<UserEntity>, password: string): Promise<Omit<UserEntity, 'password'>> {
+  async signUp(userData: UserEntity, password: string): Promise<{ token: string; user: Omit<UserEntity, 'password'> }> {
     const newUserRef = this.firestore.collection('users').doc();
     const hashedPassword = await this.hashPassword(password);
 
-    // Store password separately
     const newUser = {
       ...userData,
       id: newUserRef.id,
-      password: hashedPassword, // Password is stored in Firestore, but not part of UserEntity
+      password: hashedPassword,
     };
 
     await newUserRef.set(newUser);
 
+    // Omit the password field for the return value
     const { password: _password, ...userWithoutPassword } = newUser;
-    return userWithoutPassword as UserEntity;
+
+    const token = this.generateToken(newUserRef.id); // Generate JWT
+    return { token, user: userWithoutPassword as Omit<UserEntity, 'password'> }; // Ensure correct type
   }
 
   // Login user with email and password
-  async loginUser(email: string, password: string): Promise<Omit<UserEntity, 'password'> | null> {
-    const userSnapshot = await this.firestore.collection('users')
-      .where('email', '==', email)
-      .limit(1)
-      .get();
+  async loginUser(email: string, password: string): Promise<{ token: string; user: Omit<UserEntity, 'password'> } | null> {
+    const userSnapshot = await this.firestore.collection('users').where('email', '==', email).limit(1).get();
 
     if (userSnapshot.empty) {
       throw new Error('User with this email does not exist.');
     }
 
     const userDoc = userSnapshot.docs[0];
-    const userData = userDoc.data() as UserEntity & { password: string }; // Include password for comparison
+    const userData = userDoc.data() as UserEntity & { password: string };
 
+    // Check if the plain password matches the hashed password
     const passwordMatches = await this.comparePassword(password, userData.password);
     if (!passwordMatches) {
       throw new Error('Invalid credentials.');
     }
 
-    // Now that the password is confirmed, use getUserById to return sanitized user data
-    return this.getUserById(userDoc.id);
+    // Destructure userData but rename the password variable
+    const { password: _password, ...userWithoutSensitiveData } = userData;
+    const token = this.generateToken(userDoc.id); // Generate JWT
+    return { token, user: userWithoutSensitiveData };
   }
 
   // Logout user (typically handled client-side)
@@ -120,4 +123,10 @@ export class UserService {
   private async comparePassword(plainPassword: string, hashedPassword: string): Promise<boolean> {
     return bcrypt.compare(plainPassword, hashedPassword);
   }
+
+  private generateToken(userId: string): string {
+    const payload = { id: userId };
+    return sign(payload, '3005', { expiresIn: '1h' }); // Use a strong secret and consider environment variables for production
+  }
+
 }

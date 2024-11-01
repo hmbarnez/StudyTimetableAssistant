@@ -4,7 +4,7 @@ import { icons } from '../../constants';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import ProgressBar from 'react-native-progress/Bar';
 import { useDispatch, useSelector } from 'react-redux';
-import { update } from '../redux/reducers/userReducer';
+import { setUser } from '../redux/reducers/userReducer';
 import { updateUser } from '../services/userAPI';
 
 const questions = [
@@ -89,11 +89,13 @@ const AccountForm = () => {
     const typeMap = { A: 'Focused Learner', B: 'Balanced Student', C: 'Distracted Student', D: 'Procrastinator' };
     const accountType = typeMap[maxType];
 
+
     try {
       // Update user with the new account type
       const updatedUser = await updateUser(user.id, { type: accountType });
-      dispatch(update(updatedUser)); // Update Redux with the user type
-      navigation.navigate('account-created', { accountType });
+      console.log(updatedUser)
+      dispatch(setUser(updatedUser)); // Update Redux with the user type
+      navigation.navigate('account-created');
     } catch (error) {
       console.error('Failed to update user:', error.message);
     }
