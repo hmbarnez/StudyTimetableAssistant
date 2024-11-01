@@ -27,7 +27,7 @@ const CustomCalendar = ({ date, setDate, onClose, handleInputChange, fieldName})
             dotColor: "#4DC591",
           }}
           onDayPress={(day) => {
-            console.log("selected day", day);
+            // console.log("selected day", day);
             setDate(day.dateString); // Update the date in the parent component
             handleInputChange(fieldName, day.dateString);
             setTimeout(() => {
