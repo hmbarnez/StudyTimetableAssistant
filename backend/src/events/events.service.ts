@@ -118,6 +118,26 @@ export class EventsService {
     };
   }
 
+  async getAllEvents(userId: string): Promise<{ [date: string]: { classes: any[]; exams: any[]; tasks: any[] } }> {
+    const userRef = this.firestore.collection('users').doc(userId);
+    const userSnapshot = await userRef.get();
+
+    if (!userSnapshot.exists) {
+      throw new Error(`User with ID ${userId} does not exist.`);
+    }
+
+    const userData = userSnapshot.data();
+
+    // If the schedule doesn't exist, initialize it as an empty object and update Firestore
+    if (!userData.schedule) {
+      const emptySchedule = {}; // Initialize an empty schedule
+      await userRef.update({ schedule: emptySchedule }); // Update Firestore with the empty schedule
+      return emptySchedule; // Return the empty schedule
+    }
+
+    return userData.schedule; // Return the existing schedule
+  }
+
   async updateEvent(userId: string, eventId: string, date: string, updatedData: Partial<EventEntity>): Promise<void> {
 
     // Retrieve the user document
@@ -163,7 +183,6 @@ export class EventsService {
     // Save the updated schedule back to Firestore
     await userRef.update({ schedule });
   }
-
 
   async updateFutureEvent(userId: string, eventId: string, date: string, updatedData: Partial<EventEntity>): Promise<void> {
     const event = await this.getEvent(userId, eventId, date);

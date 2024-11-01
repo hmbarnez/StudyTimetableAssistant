@@ -1,23 +1,16 @@
-import { View, Text,} from 'react-native';
+import { View, Text, } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import React,{ useState, useEffect }  from 'react';
+import React, { useState, useEffect } from 'react';
 import AuthButton from '../../components/AuthButton';
 import { useNavigation } from '@react-navigation/native';
-
 
 const AccountCreation = () => {
 
   const navigation = useNavigation();
 
-  // Retrieve userId from session storage
-  const userId = sessionStorage.getItem('userId');
-
-
-  console.log("UserID on AccountCreation:", userId);
-
   const navigateToForm = () => {
     // Directly navigate to the account form page
-    navigation.navigate('account-form', { userId });
+    navigation.navigate('account-form');
 
   }
 

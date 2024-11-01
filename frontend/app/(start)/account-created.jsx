@@ -4,16 +4,14 @@ import React from 'react'
 import AuthButton from '../../components/AuthButton';
 import { useRoute } from '@react-navigation/native';
 import { router } from 'expo-router'
-
-
+import { useSelector } from 'react-redux';
 
 const AccountCreated = () => {
-
-  const route = useRoute(); // Get access to the route object
-  const { accountType } = route.params; // Destructure the accountType from route.params
-
+  const user = useSelector((state => state.user.user))
+  const userType = useSelector((state => state.user.user)) ? user.type : null;
+  const userId = useSelector((state => state.user.user)) ? user.id : null;
   const navigateToHome = () => {
-    router.navigate('/(tabs)/home');  
+    router.push({ pathname: '/(tabs)/home', params: { userId } })
   }
 
 
@@ -24,9 +22,10 @@ const AccountCreated = () => {
           <Text className="text-black text-4xl text-semibold mt-10 font-psemibold text-center">
             Your account type is:
           </Text>
-          <Text className=' text-[#00664F] text-3xl font-psemibold text-center mt-10'>
-            {accountType}!
+          <Text className='text-[#00664F] text-3xl font-psemibold text-center mt-10'>
+            {userType}
           </Text>
+
         </View>
         <View>
           <AuthButton

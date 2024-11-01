@@ -1,98 +1,67 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, Platform, Alert } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import logo from '../../assets/images/logo.png';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { getAuth, signOut, deleteUser, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
-import { getFirestore, doc, getDoc, deleteDoc } from 'firebase/firestore';
-import { router } from 'expo-router';
+import { useDispatch, useSelector } from 'react-redux';
+import { logoutUser, deleteAccount } from '../services/authAPI';
+import { logout, setError } from '../redux/reducers/userReducer';
+import PasswordPrompt from '../../components/PasswordPrompt';
+import { setSchedule } from '../redux/reducers/scheduleReducer';
+import { fetchEvents } from '../services/eventAPI';
+import { fetchUser } from '../services/userAPI';
+import { router, useLocalSearchParams } from 'expo-router';
+import { setUser } from '../redux/reducers/userReducer';
 
 const Profile = () => {
-  const [user, setUser] = useState(null); // State to store user data
-  const [userDetails, setUserDetails] = useState(null); // State to store user details from Firestore
+  const user = useSelector((state) => state.user.user);
+  const dispatch = useDispatch();
+  const [isPromptVisible, setPromptVisible] = useState(false);
 
-  useEffect(() => {
-    const auth = getAuth();
-    const currentUser = auth.currentUser;
-    if (currentUser) {
-      setUser(currentUser);
-      const fetchUserDetails = async () => {
-        const db = getFirestore();
-        const userDoc = doc(db, 'Users', currentUser.uid);
-        const docSnap = await getDoc(userDoc);
-        if (docSnap.exists()) {
-          setUserDetails(docSnap.data());
-        } else {
-          console.error('No such document!');
-        }
-      };
-      fetchUserDetails();
-    } else {
-      console.error('No user is signed in');
-    }
-  }, []);
+  const handleDeleteAccount = async (inputPassword) => {
+    if (!inputPassword) return; // Handle empty input
 
-  const handleDeleteAccount = async () => {
-    console.log("Delete account button pressed");
-
-    const auth = getAuth();
-    const currentUser = auth.currentUser;
-
-    if (Platform.OS === 'web') {
-      // Use window.prompt for web to request password
-      const password = window.prompt('Please enter your password to confirm the deletion of your account.');
-
-      if (password) {
-        try {
-          // Reauthenticate the user using Email and Password
-          const credential = EmailAuthProvider.credential(currentUser.email, password);
-          await reauthenticateWithCredential(currentUser, credential);
-
-          // Proceed with account deletion
-          const db = getFirestore();
-          const userDoc = doc(db, 'Users', currentUser.uid);
-          await deleteDoc(userDoc); // Remove user data from Firestore
-          await deleteUser(currentUser); // Delete user from Firebase Auth
-          console.log('User account deleted');
-          router.push('/starting'); // Redirect to starting screen
-        } catch (error) {
-          console.error('Error during reauthentication or account deletion:', error);
-          alert('Reauthentication Failed: The password entered is incorrect. Please try again.');
-        }
-      }
-    } else {
-      // Mobile Reauthentication using Alert.prompt
-      Alert.prompt(
-        'Reauthenticate',
-        'Please enter your password to confirm the deletion of your account.',
-        [
-          { text: 'Cancel', style: 'cancel' },
-          { 
-            text: 'Delete', 
-            style: 'destructive',
-            onPress: async (inputPassword) => {
-              try {
-                // Reauthenticate the user using Email and Password
-                const credential = EmailAuthProvider.credential(currentUser.email, inputPassword); 
-                await reauthenticateWithCredential(currentUser, credential);
-
-                // Proceed with account deletion
-                const db = getFirestore();
-                const userDoc = doc(db, 'Users', currentUser.uid);
-                await deleteDoc(userDoc); // Remove user data from Firestore
-                await deleteUser(currentUser); // Delete user from Firebase Auth
-                console.log('User account deleted');
-                router.push('/starting'); // Redirect to starting screen
-              } catch (error) {
-                console.error('Error during reauthentication or account deletion:', error);
-                Alert.alert('Reauthentication Failed', 'The password entered is incorrect. Please try again.');
-              }
-            }
-          }
-        ],
-        'secure-text'
-      );
+    try {
+      // Call your delete account function
+      await deleteAccount(user.id, inputPassword); // Assume this function verifies the password
+      setPromptVisible(false);
+      dispatch(logout()); // Update Redux state
+      router.push('/starting'); // Redirect to starting screen
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      Alert.alert('Error', error.message || 'Failed to delete account.');
     }
   };
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser(); // Call the API to log out
+      dispatch(logout()); // Dispatch the logout action to update the Redux store
+      router.push('/(auth)/sign-in'); // Redirect to sign-in page after logout
+    } catch (err) {
+      dispatch(setError(err.message));
+    }
+  };
+
+
+  const { userId } = useLocalSearchParams();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch user data and store it in Redux
+        const userData = await fetchUser(userId);
+        dispatch(setUser(userData));
+
+        // Fetch schedule data
+        const scheduleData = await fetchEvents(userId);
+        dispatch(setSchedule(scheduleData)); // Store schedule in Redux
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      }
+    };
+
+    if (userId) fetchData();
+  }, [dispatch, userId]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -102,12 +71,18 @@ const Profile = () => {
         {/* Profile Picture and Information */}
         <View style={styles.profileSection}>
           <Image source={logo} style={styles.profileImage} />
-          <Text style={styles.profileName}>
-            {userDetails ? `${userDetails.firstName} ${userDetails.lastName}` : 'Loading...'}
-          </Text>
-          <Text style={styles.profileEmail}>
-            {user ? user.email : 'Loading...'}
-          </Text>
+          {user ? (
+            <>
+              <Text style={styles.profileName}>
+                {`${user.firstName} ${user.lastName}`}
+              </Text>
+              <Text style={styles.profileEmail}>
+                {user.email}
+              </Text>
+            </>
+          ) : (
+            <Text style={styles.profileName}>Loading...</Text>
+          )}
         </View>
 
         {/* Settings Section */}
@@ -129,14 +104,20 @@ const Profile = () => {
 
         {/* Bottom Buttons */}
         <View style={styles.bottomButtons}>
-          <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteAccount}>
+          <TouchableOpacity style={styles.deleteButton} onPress={() => setPromptVisible(true)}>
             <Text style={styles.deleteButtonText}>Delete my account</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.logoutButton} onPress={() => signOut(getAuth()).then(() => router.push('/starting'))}>
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
             <Text style={styles.logoutButtonText}>Log out</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      <PasswordPrompt
+        visible={isPromptVisible}
+        onConfirm={handleDeleteAccount}
+        onCancel={() => setPromptVisible(false)}
+      />
     </SafeAreaView>
   );
 };
@@ -195,7 +176,7 @@ const styles = StyleSheet.create({
     color: 'gray',
   },
   bottomButtons: {
-    paddingBottom: 20, 
+    paddingBottom: 20,
   },
   deleteButton: {
     backgroundColor: 'red',

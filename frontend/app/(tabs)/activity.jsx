@@ -98,6 +98,8 @@ const Activity = () => {
     setForm(intitialform);
   };
 
+
+
   return (
     <SafeAreaView className="bg-[#FFFFFF] h-full">
       <ScrollView className="px-4 mt-10 bg-[#F2F2F7] rounded-t-3xl py-4">
@@ -119,7 +121,7 @@ const Activity = () => {
         <View className="w-full p-4 pt-0 space-y-4">
           {/* Conditional Rendering for "Exams" */}
           {activityType === 'Exams' && (
-            <ExamActivity form={form} handleInputChange={handleInputChange} formatTime={convertTo12Hour}/>
+            <ExamActivity form={form} handleInputChange={handleInputChange} formatTime={convertTo12Hour} />
           )}
 
           {/* Placeholder for "Classes" */}
