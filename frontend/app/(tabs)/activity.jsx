@@ -2,12 +2,11 @@ import { View, Text, TextInput, TouchableOpacity, ScrollView} from 'react-native
 import axios from 'axios';
 import moment from 'moment';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import ExamActivity from '../../components/activity/ExamActivity';
 import ClassActivity from '../../components/activity/ClassActivity';
 import TaskActivity from '../../components/activity/TaskActivity';
-// import { db } from '../../firebaseConfig';
-// import { collection, addDoc } from 'firebase/firestore';
+import { useSelector } from 'react-redux';
 
 const Activity = () => {
   const intitialform = {
@@ -17,8 +16,22 @@ const Activity = () => {
 };
 
   const [form, setForm] = useState(intitialform);
-
   const [activityType, setActivityType] = useState('Exams'); // Default to "Exams"
+  const [userId, setUserId] = useState(null);
+
+  const userFromState = useSelector((state) => state.user.user);
+
+  //used to get the user id from the redux state
+  //if the user is logged in, set the userId to the user id
+  useEffect(() => {
+    if (userFromState) {
+      setUserId(userFromState.id);
+    } else {
+      setUserId(null); // Clear userId if user is logged out
+    }
+  }, [userFromState]);
+
+
 
   const handleInputChange = (field, value) => {
     setForm({ ...form, [field]: value });
@@ -39,7 +52,7 @@ const Activity = () => {
 
   // get the day of the week using moment and .format('dddd')
   const getDayOfWeekFromDate = (formDate) => {
-    console.log('formDate:', formDate);
+    // console.log('formDate:', formDate);
     const date = moment(formDate, 'YYYY-MM-DD');
     return date.format('dddd');
   }
@@ -75,7 +88,7 @@ const Activity = () => {
       };
     } 
   
-    const userId = 'GwwihkBX4iMUZcWouAku'; // Replace with the actual user ID later with redux
+    // const userId = 'GwwihkBX4iMUZcWouAku'; // Replace with the actual user ID later with redux
     // Submit the constructed requestBody  
     axios.post(`http://localhost:3000/events/${userId}`, requestBody, {
       headers: {
