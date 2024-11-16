@@ -9,6 +9,7 @@ import { fetchEvents } from '../services/eventAPI';
 import { fetchUser } from '../services/userAPI';
 import { router, useLocalSearchParams } from 'expo-router';
 import { setUser } from '../redux/reducers/userReducer';
+import { format } from 'date-fns';
 
 const Home = () => {
   const [activeTab, setActiveTab] = useState('Classes');
@@ -41,10 +42,11 @@ const Home = () => {
 
   useEffect(() => {
     // Update state based on the active date from schedule in Redux
-    if (schedule && schedule[date]) {
-      setClasses(schedule[date].classes || []);
-      setTasks(schedule[date].tasks || []);
-      setExams(schedule[date].exams || []);
+    const formattedDate = format(date, 'yyyy-MM-dd');
+    if (schedule && schedule[formattedDate]) {
+      setClasses(schedule[formattedDate].classes || []);
+      setTasks(schedule[formattedDate].tasks || []);
+      setExams(schedule[formattedDate].exams || []);
     } else {
       setClasses([]);
       setTasks([]);
@@ -67,7 +69,7 @@ const Home = () => {
 
   return (
     <View className="bg-white flex-1">
-      <DateBar selectedDate={date} setDate={setDate} onPress={() => router.push({ pathname: '/schedule', params: { userId } })} />
+      <DateBar selectedDate={date} setDate={setDate} />
       <TabBar
         tabs={[
           { name: 'Classes', count: classes.length },
