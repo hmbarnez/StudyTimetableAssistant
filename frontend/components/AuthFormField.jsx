@@ -3,7 +3,7 @@ import React from 'react'
 import { useState } from 'react'
 import { icons } from '../constants'
 
-const AuthFormField = ({title, value, placeholder, handleChangeText, otherStyles, ...props}) => {
+const AuthFormField = ({title, value, placeholder, handleChangeText, otherStyles, editable = true, ...props}) => {
   const [showPassword, setShowPassword] = useState(false)
   
   return (
@@ -18,6 +18,7 @@ const AuthFormField = ({title, value, placeholder, handleChangeText, otherStyles
           placeholderTextColor="#7C8BA0"
           onChangeText={handleChangeText}
           secureTextEntry={title === 'Password' && !showPassword}
+          editable={editable} // Pass editable prop to TextInput
         />
         
         {title === 'Password' && (
