@@ -6,14 +6,32 @@ import { router } from 'expo-router';
 import logo from '../../assets/images/logo.png';
 import { ScrollView } from 'react-native';
 import AuthFormField from '../../components/AuthFormField';
+import { fetchUser, updateUser } from '../services/userAPI'; // Import setUser action
+import { useDispatch, useSelector } from 'react-redux'; 
+import { setUser } from '../redux/reducers/userReducer';
+
 
 const AccountSettings = () => {
-  const [userDetails, setUserDetails] = useState({ firstName: '', lastName: '', email: '' });
+  // const [userDetails, setUserDetails] = useState({ firstName: '', lastName: '', email: '' });
+  const user = useSelector((state) => state.user.user);
+  const dispatch = useDispatch();
   const [updatedDetails, setUpdatedDetails] = useState({ firstName: '', lastName: '', email: '' });
   const [profilePic, setProfilePic] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    // Fetch the user data on component mount
+    const fetchData = async () => {
+      try {
+        const userData = await fetchUser(user.id);  // Make sure to use a valid userId
+        dispatch(setUser(userData));
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      }
+    };
+    if (user?.id) fetchData(); // Fetch data if user id is available
+  }, [dispatch, user]);
   // useEffect(() => {
 
   //   const currentUser = auth.currentUser;
@@ -49,29 +67,15 @@ const AccountSettings = () => {
   // }, []);
 
   const handleSaveChanges = async () => {
-    // setLoading(true);
-    // try {
-    //   const auth = getAuth();
-    //   const currentUser = auth.currentUser;
-    //   const db = getFirestore();
-    //   const userDoc = doc(db, 'Users', currentUser.uid);
-
-    //   await updateDoc(userDoc, {
-    //     firstName: updatedDetails.firstName,
-    //     lastName: updatedDetails.lastName,
-    //   });
-
-    //   if (updatedDetails.email !== currentUser.email) {
-    //     await currentUser.updateEmail(updatedDetails.email);
-    //   }
-
-    //   alert('Changes saved successfully!');
-    // } catch (error) {
-    //   console.error('Error updating details:', error);
-    //   alert('Error updating details.');
-    // } finally {
-    //   setLoading(false);
-    // }
+    try {
+      // Call updateUser service to update the account type in the backend
+      const updatedUser = await updateUser(user.id, { firstName: updatedDetails.firstName, lastName:updatedDetails.lastName });
+      // Dispatch the updated user data to Redux
+      dispatch(setUser(updatedUser));
+      console.log("Account type updated successfully.");
+    } catch (error) {
+      console.error("Error updating account type: ", error);
+    }
   };
 
   const handleCancel = () => {
@@ -109,7 +113,7 @@ const AccountSettings = () => {
           <AuthFormField
             title="First Name"
             placeholder="First Name"
-            value={updatedDetails.firstName}
+            value={updatedDetails.firstName || user.firstName} // Use updatedDetails if available, fallback to user.firstName
             handleChangeText={(text) => setUpdatedDetails({ ...updatedDetails, firstName: text })}
           />
 
@@ -118,7 +122,7 @@ const AccountSettings = () => {
           <AuthFormField
             title="Last Name"
             placeholder="Last Name"
-            value={updatedDetails.lastName}
+            value={updatedDetails.lastName || user.lastName} // Use updatedDetails if available, fallback to user.lastName
             handleChangeText={(text) => setUpdatedDetails({ ...updatedDetails, lastName: text })}
           />
 
@@ -127,9 +131,8 @@ const AccountSettings = () => {
           <AuthFormField
             title="Email"
             placeholder="Email"
-            value={updatedDetails.email}
-            handleChangeText={(text) => setUpdatedDetails({ ...updatedDetails, email: text })}
-            editable={false}
+            value={user.email}
+            // handleChangeText={(text) => setUpdatedDetails({ ...updatedDetails, email: text })}
           />
 
         </View>
@@ -153,7 +156,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#FFFFFF',
-    borderRadius: 45,
+    // borderRadius: 45,
   },
   header: {
     marginBottom: 20,
