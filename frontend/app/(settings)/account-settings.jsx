@@ -12,7 +12,6 @@ import { setUser } from '../redux/reducers/userReducer';
 
 
 const AccountSettings = () => {
-  // const [userDetails, setUserDetails] = useState({ firstName: '', lastName: '', email: '' });
   const user = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
   const [updatedDetails, setUpdatedDetails] = useState({ firstName: '', lastName: '', email: '' });
@@ -38,56 +37,6 @@ const AccountSettings = () => {
 
     if (userId) fetchData();
   }, [dispatch, userId]);
-
-
-
-  // useEffect(() => {
-  //   // Fetch the user data on component mount
-  //   const fetchData = async () => {
-  //     try {
-  //       const userData = await fetchUser(user.id);  // Make sure to use a valid userId
-  //       dispatch(setUser(userData));
-  //     } catch (error) {
-  //       console.error("Failed to fetch data:", error);
-  //     }
-  //   };
-  //   if (user?.id) fetchData(); // Fetch data if user id is available
-  // }, [dispatch, user]);
-
-
-  // useEffect(() => {
-
-  //   const currentUser = auth.currentUser;
-
-  //   if (currentUser) {
-  //     const fetchUserDetails = async () => {
-  //       setLoading(true);
-  //       try {
-  //         const db = getFirestore();
-  //         const userDoc = doc(db, 'Users', currentUser.uid);
-  //         const docSnap = await getDoc(userDoc);
-
-  //         if (docSnap.exists()) {
-  //           const data = docSnap.data();
-  //           setUserDetails(data);
-  //           setUpdatedDetails(data);
-  //           if (data.profilePic) {
-  //             setProfilePic(data.profilePic);
-  //           }
-  //         } else {
-  //           console.error('No such document!');
-  //         }
-  //       } catch (err) {
-  //         setError('Failed to fetch user details.');
-  //         console.error(err);
-  //       } finally {
-  //         setLoading(false);
-  //       }
-  //     };
-
-  //     fetchUserDetails();
-  //   }
-  // }, []);
 
   const handleSaveChanges = async () => {
     try {
@@ -136,8 +85,8 @@ const AccountSettings = () => {
           <AuthFormField
             title="First Name"
             placeholder="First Name"
-            // value={updatedDetails.firstName || user.firstName} // Use updatedDetails if available, fallback to user.firstName
-            // handleChangeText={(text) => setUpdatedDetails({ ...updatedDetails, firstName: text })}
+            value={updatedDetails.firstName || user.firstName} // Use updatedDetails if available, fallback to user.firstName
+            handleChangeText={(text) => setUpdatedDetails({ ...updatedDetails, firstName: text })}
           />
 
           {/* Last Name Field */}
@@ -145,8 +94,8 @@ const AccountSettings = () => {
           <AuthFormField
             title="Last Name"
             placeholder="Last Name"
-            // value={updatedDetails.lastName || user.lastName} // Use updatedDetails if available, fallback to user.lastName
-            // handleChangeText={(text) => setUpdatedDetails({ ...updatedDetails, lastName: text })}
+            value={updatedDetails.lastName || user.lastName} // Use updatedDetails if available, fallback to user.lastName
+            handleChangeText={(text) => setUpdatedDetails({ ...updatedDetails, lastName: text })}
           />
 
           {/* Email Field */}
@@ -154,7 +103,7 @@ const AccountSettings = () => {
           <AuthFormField
             title="Email"
             placeholder="Email"
-            // value={user.email} // Display the current email
+            value={user.email} // Display the current email
             editable={false}   // Make the field explicitly uneditable
           />
 
