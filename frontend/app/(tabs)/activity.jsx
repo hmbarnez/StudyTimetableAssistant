@@ -90,7 +90,7 @@ const Activity = () => {
   
     // const userId = 'GwwihkBX4iMUZcWouAku'; // Replace with the actual user ID later with redux
     // Submit the constructed requestBody  
-    axios.post(`http://10.0.0.192:3000/events/${userId}`, requestBody, {
+    axios.post(`http://localhost:3000/events/${userId}`, requestBody, {
       headers: {
         'Content-Type': 'application/json',
       },

@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { useState } from "react";
 import CustomDatePicker from "./CustomDatePicker";
 import CustomTimePicker from './CustomTimePicker';
+import CustomWeekdayPicker from "./CustomWeekdayPicker";
 
 const ClassActivity = ({ form, handleInputChange, formatTime}) => {
   const [startClassDate, setStartClassDate] = useState("");
@@ -61,7 +62,7 @@ const ClassActivity = ({ form, handleInputChange, formatTime}) => {
       </View>
       
 
-      <View>
+      {/* <View>
         <Text className="text-l font-psemibold mt-2">Days</Text>
         <TextInput
           id="classDays"
@@ -71,7 +72,9 @@ const ClassActivity = ({ form, handleInputChange, formatTime}) => {
           onChangeText={(value) => handleInputChange("classDays", value)}
           className="text-[#61677D] font-pregular border border-gray-300 rounded p-2 mt-2"
         />
-      </View>
+      </View> */}
+
+      <CustomWeekdayPicker handleInputChange={handleInputChange} fieldName={"classDays"}/>
       
       <View>
         <Text className="text-l font-psemibold pt-2">Start Date</Text>
