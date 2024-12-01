@@ -33,8 +33,8 @@ export const DateBar = ({ selectedDate, setDate, onPress }) => {
             <Text className="text-teal-600 font-pregular">{monthYear}</Text>
           </View>
           {isToday && (
-            <View className="ml-auto bg-lime-50 w-20 h-10 rounded-lg border-solid items-center justify-center">
-              <Text className="font-psemibold text-lime-500">Today</Text>
+            <View className="ml-auto bg-[#eaffea] w-20 h-10 rounded-lg border-solid items-center justify-center ">
+              <Text className="font-psemibold text-[#4DC591]">Today</Text>
             </View>
           )}
         </View>

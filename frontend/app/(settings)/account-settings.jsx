@@ -8,8 +8,13 @@ import { ScrollView } from 'react-native';
 import AuthFormField from '../../components/AuthFormField';
 
 const AccountSettings = () => {
-  const [userDetails, setUserDetails] = useState({ firstName: '', lastName: '', email: '' });
-  const [updatedDetails, setUpdatedDetails] = useState({ firstName: '', lastName: '', email: '' });
+  const [userDetails, setUserDetails] = useState({
+    firstName: '', lastName: '', email: '',
+    studyHours: ''
+});
+  const [updatedDetails, setUpdatedDetails] = useState({
+    firstName: '', lastName: '', email: '',
+    studyHours: '' });
   const [profilePic, setProfilePic] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -130,6 +135,15 @@ const AccountSettings = () => {
             value={updatedDetails.email}
             handleChangeText={(text) => setUpdatedDetails({ ...updatedDetails, email: text })}
             editable={false}
+          />
+
+          <Text>Study Hours: </Text>
+          <AuthFormField
+            title="Study Hours"
+            placeholder="Study Hours per Week"
+            value={updatedDetails.studyHours}
+            handleChangeText={(text) => setUpdatedDetails({ ...updatedDetails, studyHours: text })}
+            keyboardType="numeric" // Ensuring numeric input
           />
 
         </View>

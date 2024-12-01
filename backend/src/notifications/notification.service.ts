@@ -81,6 +81,6 @@ export class NotificationService implements OnModuleInit {
         // Schedule a check for notifications every minute
         setInterval(() => {
             this.checkAndSendNotifications();
-        }, 600); // 60,000 ms = 1 minute
+        }, 60000000   ); // 60,000 ms = 1 minute
     }
 }
