@@ -11,7 +11,6 @@ import { fetchEvents } from '../services/eventAPI';
 import { fetchUser } from '../services/userAPI';
 import { router, useLocalSearchParams } from 'expo-router';
 import { setUser } from '../redux/reducers/userReducer';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Profile = () => {
   const user = useSelector((state) => state.user.user);
@@ -25,7 +24,6 @@ const Profile = () => {
       // Call your delete account function
       await deleteAccount(user.id, inputPassword); // Assume this function verifies the password
       setPromptVisible(false);
-      await AsyncStorage.removeItem('token');
       dispatch(logout()); // Update Redux state
       router.push('/starting'); // Redirect to starting screen
     } catch (error) {
@@ -37,7 +35,6 @@ const Profile = () => {
   const handleLogout = async () => {
     try {
       await logoutUser(); // Call the API to log out
-      await AsyncStorage.removeItem('token');
       dispatch(logout()); // Dispatch the logout action to update the Redux store
       router.push('/(auth)/sign-in'); // Redirect to sign-in page after logout
     } catch (err) {
@@ -99,8 +96,8 @@ const Profile = () => {
             <Text>Notification Settings</Text>
             <Text style={styles.arrow}>›</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.settingOption} onPress={() => router.push('/feedback')}>
-            <Text>Feedback</Text>
+          <TouchableOpacity style={styles.settingOption} onPress={() => router.push('/about')}>
+            <Text>About App</Text>
             <Text style={styles.arrow}>›</Text>
           </TouchableOpacity>
         </View>
@@ -146,8 +143,8 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   profileImage: {
-    width: 100,
-    height: 100,
+    width: 80,
+    height: 80,
     borderRadius: 50,
     marginBottom: 10,
   },
