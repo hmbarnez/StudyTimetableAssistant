@@ -109,7 +109,7 @@ This project leverages modern software architecture and user-centric design to o
 To get a local copy up and running follow these simple example steps.
 
 ### Prerequisites
-
+- Setup a firestore database
 - Set up a react project on a compatible IDE.
 * npm
   ```sh
