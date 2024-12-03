@@ -38,6 +38,8 @@ const Home = () => {
     };
 
     if (userId) fetchData();
+    console.log('userId:', userId);
+    console.log('schedule:', schedule);
   }, [dispatch, userId]);
 
   useEffect(() => {

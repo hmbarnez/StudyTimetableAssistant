@@ -1,95 +1,102 @@
-import React, { useRef, useEffect } from 'react';
-import { ScrollView, View, Text, StyleSheet } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
 
-// Event data
-const events = [
-  { title: 'Meeting', startTime: 9.5, endTime: 10.5, eventColor: '#ACF4D1' },
-  { title: 'Lunch', startTime: 11.5, endTime: 13, eventColor: '#ACE7F4' },
-  { title: 'Gym', startTime: 13, endTime: 15, eventColor: '#ACF4D1' },
-  { title: 'Project Work', startTime: 14, endTime: 16, eventColor: '#ACE7F4' },
-  { title: 'Test Event', startTime: 13, endTime: 17, eventColor: '#ACF4D1' },
-  { title: 'Dinner', startTime: 18, endTime: 19, eventColor: '#ACE7F4' },
-  { title: 'Movie Night', startTime: 20, endTime: 22, eventColor: '#ACF4D1' },
-  { title: 'Reading', startTime: 21, endTime: 22, eventColor: '#ACE7F4' },
-  { title: 'Sleep', startTime: 23, endTime: 24, eventColor: '#ACF4D1' },
-];
+const parseTimeToMinutes = (time) => {
+  const [hours, minutes] = time.split(':').map(Number);
+  return hours * 60 + minutes;
+};
 
-// Helper function to sort events by start time
-const sortEvents = (events) => events.sort((a, b) => a.startTime - b.startTime);
+const prepareEventData = (data) => {
+  const allEvents = [];
 
-// Helper function to find overlapping events
-const findOverlaps = (sortedEvents) => {
-  const eventSlots = Array(48).fill(null).map(() => []);
-  sortedEvents.forEach((event, index) => {
-    for (let i = event.startTime * 2; i < event.endTime * 2; i++) {
-      eventSlots[i].push(index); // Track events for each half-hour slot
+  ['classes', 'exams', 'tasks'].forEach((type) => {
+    data[type]?.forEach((event) => {
+      console.log('event:', event);
+      console.log('type:', type);
+      allEvents.push({
+        ...event,
+        startMinute: parseTimeToMinutes(event.startingTime),
+        endMinute: parseTimeToMinutes(event.endingTime),
+        eventColor: 
+          type === 'classes' ? '#ACE7F4' : 
+          type === 'exams' ? '#ACF4D1' : 
+          '#ffcf56',
+      });
+    });
+  });
+
+  return allEvents;
+};
+
+const findOverlaps = (events) => {
+  const eventSlots = Array(1440).fill(null).map(() => []); // One slot per minute
+  events.forEach((event, index) => {
+    for (let i = event.startMinute; i < event.endMinute; i++) {
+      eventSlots[i].push(index); // Map events to each minute slot
     }
   });
   return eventSlots;
 };
 
-// Combined helper function to convert 24-hour time to 12-hour time with AM/PM
-const formatTime = (time, includeMinutes = false) => {
-  const hour = Math.floor(time);
-  const minutes = includeMinutes ? (time % 1 === 0.5 ? '30' : '00') : '';
-  const period = hour < 12 ? 'AM' : 'PM';
-  const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
-  return includeMinutes ? `${formattedHour}:${minutes} ${period}` : `${formattedHour} ${period}`;
-};
-
-// Component to render a single event
-const Event = ({ event, index, eventSlots }) => {
-  const startSlot = event.startTime * 2;
-  const endSlot = event.endTime * 2;
-  const duration = endSlot - startSlot;
-  const overlappingCount = Math.max(...eventSlots.slice(startSlot, endSlot).map(slot => slot.length));
-  const widthPercentage = 80 / overlappingCount; 
-  const overlapIndex = eventSlots[startSlot].indexOf(index); // Get the position of this event in the overlap
-
-  return (
-    <View
-      key={index}
-      style={[
-        styles.eventBlock,
-        {
-          top: startSlot * 40, // Position based on start time (40px per half-hour)
-          height: duration * 40, // Height based on duration
-          width: `${widthPercentage}%`, // Divide width if there are overlaps
-          left: `${overlapIndex * widthPercentage + 18}%`, // Position event based on overlap index and add margin
-          backgroundColor: event.eventColor,
-        },
-      ]}
-    >
-      <Text style={styles.eventText}>{event.title}</Text>
-      <Text style={styles.eventTime}>
-        {formatTime(event.startTime, true)} - {formatTime(event.endTime, true)}
-      </Text>
-    </View>
-  );
-};
-
-// Component to render the timeline with hours
 const Timeline = () => (
   <>
-    {Array.from({ length: 24 }, (_, i) => (
-      <View key={i} style={styles.hourBlock}>
-        <Text style={styles.hourText}>{formatTime(i)}</Text>
+    {Array.from({ length: 1440 }, (_, i) => (
+      <View key={i} style={styles.minuteBlock}>
+        {i % 60 === 0 && (
+          <Text style={styles.hourText}>{formatTime(Math.floor(i / 60))}</Text>
+        )}
       </View>
     ))}
   </>
 );
 
-const DayView = () => {
-  const sortedEvents = sortEvents(events);
-  const eventSlots = findOverlaps(sortedEvents);
+const Event = ({ event, index, eventSlots }) => {
+  const startMinute = event.startMinute;
+  const endMinute = event.endMinute;
+  const duration = endMinute - startMinute;
+  
+  // Find the number of overlapping events
+  const overlappingCount = Math.max(
+    ...eventSlots.slice(startMinute, endMinute).map((slot) => slot.length)
+  );
+  
+  // Determine the event's position based on overlaps
+  const widthPercentage = 80 / overlappingCount; // Divide width for overlaps
+  const overlapIndex = eventSlots[startMinute].indexOf(index); // Index in overlap
 
-  // Reference to the ScrollView
+  return (
+    <View
+      style={[
+        styles.eventBlock,
+        {
+          top: startMinute, // Position based on minute
+          height: duration, // Duration in minutes maps to height
+          width: `${widthPercentage}%`, // Adjust width for overlaps
+          left: `${overlapIndex * widthPercentage + 18}%`, // Offset based on overlap
+          backgroundColor: event.eventColor,
+        },
+      ]}
+    >
+      <Text style={styles.eventText}>{event.subjectName || event.taskTitle}</Text>
+      <Text style={styles.eventTime}>
+        {event.startingTime} - {event.endingTime} 
+      </Text>
+    </View>
+  );
+};
+
+const DayView = ({data}) => {
+  
+  const events = prepareEventData(data);
+  const sortedEvents = events.sort((a, b) => a.startMinute - b.startMinute);
+  const eventSlots = findOverlaps(sortedEvents); // Detect overlaps
+
   const scrollViewRef = useRef(null);
 
-  // Scroll to the first event when the component mounts
+  // Scroll to the first event on mount
   useEffect(() => {
     if (sortedEvents.length > 0) {
-      const firstEventStart = sortedEvents[0].startTime * 80; // Calculate the position of the first event
+      const firstEventStart = sortedEvents[0].startMinute; // First event minute
       scrollViewRef.current.scrollTo({ y: firstEventStart, animated: true });
     }
   }, [sortedEvents]);
@@ -104,6 +111,11 @@ const DayView = () => {
   );
 };
 
+const formatTime = (hour) => {
+  const formattedHour = hour < 10 ? `0${hour}` : hour;
+  return `${formattedHour}:00`;
+};
+
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 0,
@@ -111,23 +123,22 @@ const styles = StyleSheet.create({
     position: 'relative',
     backgroundColor: '#F2F2F7',
   },
-  hourBlock: {
-    height: 80, // Each hour block is 80px tall
-    borderBottomWidth: 2,
-    borderBottomColor: '#DDD',
-    justifyContent: 'center',
-    paddingHorizontal: 10,
+  minuteBlock: {
+    height: 1, // 1px per minute
   },
   hourText: {
-    fontSize: 16,
-    color: '#333',
+    fontSize: 14,
+    color: '#555',
+    position: 'absolute',
+    top: -5,
+    left: 5,
   },
   eventBlock: {
     position: 'absolute',
     borderWidth: 1,
     borderColor: '#F2F2F7',
     borderRadius: 5,
-    padding: 10,
+    padding: 1,
   },
   eventText: {
     fontWeight: 'bold',

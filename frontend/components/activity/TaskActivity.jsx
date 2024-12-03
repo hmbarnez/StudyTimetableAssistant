@@ -3,6 +3,7 @@ import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import CustomDatePicker from "./CustomDatePicker";
 import CustomTimePicker from "./CustomTimePicker";
+import CustomWeekdayPicker from "./CustomWeekdayPicker";
 
 const TaskActivity = ({
   form,
@@ -164,7 +165,7 @@ const TaskActivity = ({
             </View>
           </View>
 
-          <View className="flex-1 mr-2">
+          {/* <View className="flex-1 mr-2">
             <Text className="text-l font-psemibold">Days</Text>
             <TextInput
               id="taskDays"
@@ -174,7 +175,9 @@ const TaskActivity = ({
               onChangeText={(value) => handleInputChange("taskDays", value)}
               className="text-[#61677D] font-pregular border border-gray-300 rounded p-2 mt-1"
             />
-          </View>
+          </View> */}
+
+          <CustomWeekdayPicker handleInputChange={handleInputChange} fieldName={"taskDays"} />
 
           <View className="flex-row justify-between mt-2">
             <View className="flex-1 mr-2">
