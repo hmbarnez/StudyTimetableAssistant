@@ -114,7 +114,7 @@ export class NotificationService implements OnModuleInit {
 
             const userData = userDoc.data();
             const schedule = userData?.schedule;
-            const timeToStudy = userData?.timeToStudy || 0;
+            const studyHours = userData?.studyHours || 0;
 
             if (!schedule) {
                 this.logger.warn(`No schedule found for user ${userId}`);
@@ -142,10 +142,10 @@ export class NotificationService implements OnModuleInit {
                 );
             });
 
-            if (!hasNextHourEvent && timeToStudy > 0) {
+            if (!hasNextHourEvent && studyHours > 0) {
                 await this.sendPushNotification(
                     'Time to Study!',
-                    `You have ${timeToStudy} hours left for study. Make the most of this free time!`
+                    `You have ${studyHours} hours left for study. Make the most of this free time!`
                 );
             }
         } catch (error) {
