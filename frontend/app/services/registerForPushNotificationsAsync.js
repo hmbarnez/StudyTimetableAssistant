@@ -1,5 +1,6 @@
 // src/utils/notifications.js
 import * as Notifications from 'expo-notifications';
+import axios from 'axios';
 
 export async function registerForPushNotificationsAsync() {
     let token;
@@ -13,3 +14,14 @@ export async function registerForPushNotificationsAsync() {
     }
     return token;
 }
+
+export async function sendUserId(userId) {
+    try {
+        await axios.post('http://10.0.0.192:3000/notifications/id', {
+            userId: userId,
+        });
+    } catch (error) {
+        console.error('Error sending userId:', error);
+    }
+}
+

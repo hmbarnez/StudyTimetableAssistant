@@ -3,14 +3,16 @@ import axios from 'axios';
 import moment from 'moment';
 import { Firestore } from '@google-cloud/firestore';
 import * as admin from 'firebase-admin';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class NotificationService implements OnModuleInit {
     private readonly logger = new Logger(NotificationService.name);
     private firestore: Firestore;
     private expoPushToken: string; // Expo push token
+    private userId: string;
 
-    constructor() {
+    constructor(private readonly userService: UserService) {
         this.firestore = admin.firestore();
     }
 
@@ -18,6 +20,11 @@ export class NotificationService implements OnModuleInit {
     setExpoPushToken(token: string) {
         this.expoPushToken = token;
         this.logger.log(`Expo Push Token set: ${token}`);
+    }
+
+    setUserId(userId: string) {
+        this.userId = userId;
+        this.logger.log(`UserId set: ${userId}`);
     }
 
     // Send push notification
@@ -40,49 +47,129 @@ export class NotificationService implements OnModuleInit {
     }
 
     // Check and send notifications for events
-    async checkAndSendNotifications() {
+    async checkAndSendNotifications(userId: string) {
         const currentDate = moment().format('YYYY-MM-DD'); // Get current date
         const currentTime = moment(); // Current time
 
         try {
-            // Fetch all users and their schedules
-            const usersSnapshot = await this.firestore.collection('users').get();
+            // Fetch the user's schedule
+            const userDoc = await this.firestore.collection('users').doc(userId).get();
 
-            for (const userDoc of usersSnapshot.docs) {
-                const userData = userDoc.data();
-                const schedule = userData.schedule;
+            if (!userDoc.exists) {
+                this.logger.warn(`User with ID ${userId} does not exist.`);
+                return;
+            }
 
-                if (!schedule) continue; // Skip if the user has no schedule
+            const userData = userDoc.data();
+            const schedule = userData?.schedule;
+            if (!schedule) {
+                this.logger.warn(`No schedule found for user ${userId}`);
+                return;
+            }
 
-                // Iterate over the schedule for the current day
-                const todaySchedule = schedule[currentDate];
-                if (!todaySchedule) continue; // Skip if there's no schedule for today
+            // Get today's schedule
+            const todaySchedule = schedule[currentDate];
+            if (!todaySchedule) {
+                this.logger.warn(`No schedule for user ${userId} on ${currentDate}`);
+                return;
+            }
 
-                // Check classes, exams, and tasks
-                const { classes = [], exams = [], tasks = [] } = todaySchedule;
-                const events = [...classes, ...exams, ...tasks];
+            // Process events
+            const { classes = [], exams = [], tasks = [] } = todaySchedule;
+            const events = [...classes, ...exams, ...tasks];
 
-                for (const event of events) {
-                    const eventStartTime = moment(event.startingTime, 'HH:mm'); // Event's starting time
-                    const notificationOffsets = event.notificationOffsets || [60]; // Default to 1 hour before
-                    for (const offset of notificationOffsets) {
-                        const diffInMinutes = eventStartTime.diff(currentTime, 'minutes');
-                        if (diffInMinutes === offset) {
-                            await this.sendPushNotification(event.subjectName, event.startingTime);
-                        }
+            for (const event of events) {
+                const eventStartTime = moment(event.startingTime, 'HH:mm'); // Event's starting time
+                const notificationOffsets = event.notificationOffsets || [60]; // Default to 1 hour before
+                for (const offset of notificationOffsets) {
+                    const diffInMinutes = eventStartTime.diff(currentTime, 'minutes');
+                    if (diffInMinutes === offset) {
+                        await this.sendPushNotification(event.subjectName, event.startingTime);
                     }
                 }
             }
         } catch (error) {
-            this.logger.error('Error fetching or processing events', error);
+            this.logger.error(`Error fetching or processing events for user ${userId}`, error.message);
         }
     }
 
-    // Run on module initialization
+    async checkNextHourForEvents(userId: string) {
+        console.log('d')
+        if (!userId) {
+            this.logger.warn('UserId is not set. Skipping next-hour check.');
+            return;
+        }
+
+        const currentDate = moment().format('YYYY-MM-DD');
+        const currentTime = moment();
+        const nextHourStart = currentTime.clone().add(1, 'hour').startOf('hour');
+        const nextHourEnd = nextHourStart.clone().add(1, 'hour');
+
+        try {
+            const userDoc = await this.firestore.collection('users').doc(userId).get();
+            if (!userDoc.exists) {
+                this.logger.warn(`User with ID ${userId} does not exist.`);
+                return;
+            }
+
+            const userData = userDoc.data();
+            const schedule = userData?.schedule;
+            const timeToStudy = userData?.timeToStudy || 0;
+
+            if (!schedule) {
+                this.logger.warn(`No schedule found for user ${userId}`);
+                return;
+            }
+
+            const todaySchedule = schedule[currentDate];
+            if (!todaySchedule) {
+                this.logger.warn(`No schedule for user ${userId} on ${currentDate}`);
+                return;
+            }
+
+            const { classes = [], exams = [], tasks = [] } = todaySchedule;
+            const events = [...classes, ...exams, ...tasks];
+
+            // Check if any event overlaps with the next hour
+            const hasNextHourEvent = events.some(event => {
+                const eventStartTime = moment(event.startingTime, 'HH:mm');
+                const eventEndTime = event.endingTime
+                    ? moment(event.endingTime, 'HH:mm')
+                    : eventStartTime.clone().add(1, 'hour'); // Default duration is 1 hour
+
+                return (
+                    eventStartTime.isBefore(nextHourEnd) && eventEndTime.isAfter(nextHourStart)
+                );
+            });
+
+            if (!hasNextHourEvent && timeToStudy > 0) {
+                await this.sendPushNotification(
+                    'Time to Study!',
+                    `You have ${timeToStudy} hours left for study. Make the most of this free time!`
+                );
+            }
+        } catch (error) {
+            this.logger.error(`Error checking next-hour events for user ${userId}`, error.message);
+        }
+    }
+
     onModuleInit() {
-        // Schedule a check for notifications every minute
+        // Schedule notification checks every minute
         setInterval(() => {
-            this.checkAndSendNotifications();
-        }, 600000   ); // 60,000 ms = 1 minute
+            if (this.userId) {
+                this.checkAndSendNotifications(this.userId);
+            } else {
+                this.logger.warn('UserId is not set. Notifications will not be checked.');
+            }
+        }, 60000); // 60,000 ms = 1 minute
+
+        // Schedule next-hour checks every hour
+        setInterval(() => {
+            if (this.userId) {
+                this.checkNextHourForEvents(this.userId);
+            } else {
+                this.logger.warn('UserId is not set. Next-hour notifications will not be checked.');
+            }
+        }, 3600000); // 3,600,000 ms = 1 hour
     }
 }
