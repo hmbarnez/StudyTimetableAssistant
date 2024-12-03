@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { SafeAreaView, View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { SafeAreaView, View, Text, TouchableOpacity, TextInput, StyleSheet, Image } from 'react-native';
 import { icons } from '../../constants';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import ProgressBar from 'react-native-progress/Bar';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from '../redux/reducers/userReducer';
@@ -62,6 +62,11 @@ const questions = [
       "I hit snooze like it’s my morning alarm.",
       "I run and hide, pretending the reminder never existed."
     ]
+  },
+  
+  {
+    question: "How many hours do you wish to study per week?",
+    inputType: "numeric",
   }
 
 ];
@@ -69,17 +74,25 @@ const questions = [
 const AccountForm = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const user = useSelector((state => state.user.user))
+  const user = useSelector(state => state.user.user);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({ A: 0, B: 0, C: 0, D: 0 });
+  const [studyHours, setStudyHours] = useState('');
 
   const handleAnswer = (optionIndex) => {
+    if (questions[currentQuestionIndex].inputType === 'numeric') {
+      return; // Skip scoring for numeric input question
+    }
     const scoreMap = { 0: 'A', 1: 'B', 2: 'C', 3: 'D' };
     setAnswers(prev => ({ ...prev, [scoreMap[optionIndex]]: prev[scoreMap[optionIndex]] + 1 }));
+    navigateNext();
+  };
+
+  const navigateNext = () => {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      navigateToResult();
+      // This block is not entered for the numeric input question, so we add a button for it instead.
     }
   };
 
@@ -89,12 +102,9 @@ const AccountForm = () => {
     const typeMap = { A: 'Focused Learner', B: 'Balanced Student', C: 'Distracted Student', D: 'Procrastinator' };
     const accountType = typeMap[maxType];
 
-
     try {
-      // Update user with the new account type
-      const updatedUser = await updateUser(user.id, { type: accountType });
-      console.log(updatedUser)
-      dispatch(setUser(updatedUser)); // Update Redux with the user type
+      const updatedUser = await updateUser(user.id, { type: accountType, studyHours });
+      dispatch(setUser(updatedUser));
       navigation.navigate('account-created');
     } catch (error) {
       console.error('Failed to update user:', error.message);
@@ -107,6 +117,10 @@ const AccountForm = () => {
     }
   };
 
+  const handleNumericInput = (text) => {
+    setStudyHours(text.replace(/[^0-9]/g, ''));
+  };
+
   return (
     <SafeAreaView className="bg-[#4DC591] h-full">
       <View>
@@ -116,11 +130,29 @@ const AccountForm = () => {
       </View>
       <View className="w-full justify-center min-h-[88vh] mt-[80px] px-4 bg-white rounded-t-3xl">
         <Text className="text-xl text-center font-psemibold mt-5">{questions[currentQuestionIndex].question}</Text>
-        {questions[currentQuestionIndex].options.map((option, index) => (
-          <TouchableOpacity key={index} className="bg-[#00664F] rounded-md p-2 mt-10" onPress={() => handleAnswer(index)}>
-            <Text className="text-white font-pregular text-center">{option}</Text>
-          </TouchableOpacity>
-        ))}
+        {questions[currentQuestionIndex].inputType === 'numeric' ? (
+          <>
+            <TextInput
+              keyboardType="number-pad"
+              onChangeText={handleNumericInput}
+              value={studyHours}
+              className="mt-10 bg-[#F0F0F0] rounded-md p-2 text-center"
+              placeholder="Enter hours per week"
+            />
+            <TouchableOpacity
+              className="bg-[#00664F] rounded-md p-2 mt-10"
+              onPress={navigateToResult} // Now it navigates directly to the result
+            >
+              <Text className="text-white font-pregular text-center">Continue</Text>
+            </TouchableOpacity>
+          </>
+        ) : (
+          questions[currentQuestionIndex].options.map((option, index) => (
+            <TouchableOpacity key={index} className="bg-[#00664F] rounded-md p-2 mt-10" onPress={() => handleAnswer(index)}>
+              <Text className="text-white font-pregular text-center">{option}</Text>
+            </TouchableOpacity>
+          ))
+        )}
 
         <ProgressBar
           progress={(currentQuestionIndex + 1) / questions.length}

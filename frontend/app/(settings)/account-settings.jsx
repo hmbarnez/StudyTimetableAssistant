@@ -6,72 +6,47 @@ import { router } from 'expo-router';
 import logo from '../../assets/images/logo.png';
 import { ScrollView } from 'react-native';
 import AuthFormField from '../../components/AuthFormField';
+import { fetchUser, updateUser } from '../services/userAPI'; // Import setUser action
+import { useDispatch, useSelector } from 'react-redux'; 
+import { setUser } from '../redux/reducers/userReducer';
+
 
 const AccountSettings = () => {
-  const [userDetails, setUserDetails] = useState({ firstName: '', lastName: '', email: '' });
-  const [updatedDetails, setUpdatedDetails] = useState({ firstName: '', lastName: '', email: '' });
+  const user = useSelector((state) => state.user.user);
+  const dispatch = useDispatch();
+  const [updatedDetails, setUpdatedDetails] = useState({
+    firstName: user.firstName,
+    lastName: user.lastName,
+    studyHours: user.studyHours || '', // Add studyHours with fallback
+  });
   const [profilePic, setProfilePic] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // useEffect(() => {
-
-  //   const currentUser = auth.currentUser;
-
-  //   if (currentUser) {
-  //     const fetchUserDetails = async () => {
-  //       setLoading(true);
-  //       try {
-  //         const db = getFirestore();
-  //         const userDoc = doc(db, 'Users', currentUser.uid);
-  //         const docSnap = await getDoc(userDoc);
-
-  //         if (docSnap.exists()) {
-  //           const data = docSnap.data();
-  //           setUserDetails(data);
-  //           setUpdatedDetails(data);
-  //           if (data.profilePic) {
-  //             setProfilePic(data.profilePic);
-  //           }
-  //         } else {
-  //           console.error('No such document!');
-  //         }
-  //       } catch (err) {
-  //         setError('Failed to fetch user details.');
-  //         console.error(err);
-  //       } finally {
-  //         setLoading(false);
-  //       }
-  //     };
-
-  //     fetchUserDetails();
-  //   }
-  // }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const userData = await fetchUser(user.id);
+        dispatch(setUser(userData));
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      }
+    };
+    if (user?.id) fetchData();
+  }, [dispatch, user]);
 
   const handleSaveChanges = async () => {
-    // setLoading(true);
-    // try {
-    //   const auth = getAuth();
-    //   const currentUser = auth.currentUser;
-    //   const db = getFirestore();
-    //   const userDoc = doc(db, 'Users', currentUser.uid);
-
-    //   await updateDoc(userDoc, {
-    //     firstName: updatedDetails.firstName,
-    //     lastName: updatedDetails.lastName,
-    //   });
-
-    //   if (updatedDetails.email !== currentUser.email) {
-    //     await currentUser.updateEmail(updatedDetails.email);
-    //   }
-
-    //   alert('Changes saved successfully!');
-    // } catch (error) {
-    //   console.error('Error updating details:', error);
-    //   alert('Error updating details.');
-    // } finally {
-    //   setLoading(false);
-    // }
+    try {
+      const updatedUser = await updateUser(user.id, {
+        firstName: updatedDetails.firstName,
+        lastName: updatedDetails.lastName,
+        studyHours: updatedDetails.studyHours, // Include studyHours
+      });
+      dispatch(setUser(updatedUser));
+      console.log("Account details updated successfully.");
+    } catch (error) {
+      console.error("Error updating account details: ", error);
+    }
   };
 
   const handleCancel = () => {
@@ -109,8 +84,10 @@ const AccountSettings = () => {
           <AuthFormField
             title="First Name"
             placeholder="First Name"
-            value={updatedDetails.firstName}
-            handleChangeText={(text) => setUpdatedDetails({ ...updatedDetails, firstName: text })}
+            value={updatedDetails.firstName || user.firstName}
+            handleChangeText={(text) =>
+              setUpdatedDetails({ ...updatedDetails, firstName: text })
+            }
           />
 
           {/* Last Name Field */}
@@ -118,8 +95,10 @@ const AccountSettings = () => {
           <AuthFormField
             title="Last Name"
             placeholder="Last Name"
-            value={updatedDetails.lastName}
-            handleChangeText={(text) => setUpdatedDetails({ ...updatedDetails, lastName: text })}
+            value={updatedDetails.lastName || user.lastName}
+            handleChangeText={(text) =>
+              setUpdatedDetails({ ...updatedDetails, lastName: text })
+            }
           />
 
           {/* Email Field */}
@@ -127,11 +106,20 @@ const AccountSettings = () => {
           <AuthFormField
             title="Email"
             placeholder="Email"
-            value={updatedDetails.email}
-            handleChangeText={(text) => setUpdatedDetails({ ...updatedDetails, email: text })}
-            editable={false}
+            value={user.email}
           />
 
+          {/* Study Hours Field */}
+          <Text>Study Hours: </Text>
+          <AuthFormField
+            title="Study Hours"
+            placeholder="Study Hours per Week"
+            value={updatedDetails.studyHours}
+            handleChangeText={(text) =>
+              setUpdatedDetails({ ...updatedDetails, studyHours: text })
+            }
+            keyboardType="numeric" // Ensuring numeric input
+          />
         </View>
 
         <View style={styles.buttonContainer}>
@@ -153,7 +141,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#FFFFFF',
-    borderRadius: 45,
+    // borderRadius: 45,
   },
   header: {
     marginBottom: 20,

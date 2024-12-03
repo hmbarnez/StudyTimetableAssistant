@@ -6,8 +6,9 @@ import logo from '../assets/images/logo.png';
 import { useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch } from 'react-redux';
-import { login } from './redux/reducers/userReducer'; // Use login to set the user in Redux
 import { jwtDecode } from "jwt-decode";
+import { registerForPushNotificationsAsync } from './services/registerForPushNotificationsAsync';
+
 
 export default function App() {
   const dispatch = useDispatch();
@@ -15,6 +16,7 @@ export default function App() {
   useEffect(() => {
     const checkUserAuth = async () => {
       const token = await AsyncStorage.getItem('token');
+      console.log(token)
       if (token) {
         try {
           // Decode the token to get user data
@@ -42,6 +44,29 @@ export default function App() {
 
     return () => clearTimeout(timer); // Cleanup function to clear the timer
   }, [dispatch]);
+
+  useEffect(() => {
+    const sendPushTokenToBackend = async () => {
+      const token = await registerForPushNotificationsAsync();
+
+      if (token) {
+        try {
+          await fetch('http://10.0.0.192:3000/notifications/register', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ token }),
+          });
+          console.log('Token sent to backend');
+        } catch (error) {
+          console.error('Error sending token to backend:', error);
+        }
+      }
+    };
+
+    sendPushTokenToBackend();
+  }, []);
 
   return (
     <SafeAreaView className="flex-1 items-center justify-center bg-[#4DC591]">

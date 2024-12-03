@@ -1,8 +1,8 @@
-import { View, Text, TextInput, TouchableOpacity, ScrollView} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import axios from 'axios';
 import moment from 'moment';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import React, { useState , useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import ExamActivity from '../../components/activity/ExamActivity';
 import ClassActivity from '../../components/activity/ClassActivity';
 import TaskActivity from '../../components/activity/TaskActivity';
@@ -13,7 +13,7 @@ const Activity = () => {
     examSubject: '', examSubjectName: '', examRoom: '', examBuilding: '', examDate: '', examStartTime: '', examEndTime: '',
     classSubject: '', classSubjectName: '', classRoom: '', classBuilding: '', classDays: '', classStartDate: '', classEndDate: '', classStartTime: '', classEndTime: '',
     taskTitle: '', taskDescription: '', taskDate: '', taskStartDate: '', taskEndDate: '', taskStartTime: '', taskEndTime: '', taskDays: '', taskOccurs: 'Once'
-};
+  };
 
   const [form, setForm] = useState(intitialform);
   const [activityType, setActivityType] = useState('Exams'); // Default to "Exams"
@@ -77,17 +77,17 @@ const Activity = () => {
     } else if (activityType === 'Tasks') {
       let taskDaysFormatted = form.taskDays, endingDate = form.taskEndDate, startingDate = form.taskStartDate;
       if (form.taskOccurs === 'Once') {
-          taskDaysFormatted = getDayOfWeekFromDate(form.taskDate);
-          endingDate = form.taskDate;
-          startingDate = form.taskDate;
+        taskDaysFormatted = getDayOfWeekFromDate(form.taskDate);
+        endingDate = form.taskDate;
+        startingDate = form.taskDate;
       }
       requestBody = {
-          taskTitle: form.taskTitle, taskDescription: form.taskDescription,
-          eventDays: taskDaysFormatted, startingDate, endingDate,
-          startingTime: form.taskStartTime, endingTime: form.taskEndTime, type: 'task'
+        taskTitle: form.taskTitle, taskDescription: form.taskDescription,
+        eventDays: taskDaysFormatted, startingDate, endingDate,
+        startingTime: form.taskStartTime, endingTime: form.taskEndTime, type: 'task'
       };
-    } 
-  
+    }
+
     // const userId = 'GwwihkBX4iMUZcWouAku'; // Replace with the actual user ID later with redux
     // Submit the constructed requestBody  
     axios.post(`http://localhost:3000/events/${userId}`, requestBody, {
@@ -95,17 +95,17 @@ const Activity = () => {
         'Content-Type': 'application/json',
       },
     })
-    .then(response => {
-      console.log('Event saved successfully:', requestBody);
-      //reset the form
-      alert('Event saved successfully');
-      setForm(intitialform);
-    })
-    .catch(error => {
-      console.error('Error saving event:', error);
-    });
+      .then(response => {
+        console.log('Event saved successfully:', requestBody);
+        //reset the form
+        alert('Event saved successfully');
+        setForm(intitialform);
+      })
+      .catch(error => {
+        console.error('Error saving event:', error);
+      });
   };
-  
+
 
   const cancelActivity = () => {
     setForm(intitialform);

@@ -3,12 +3,13 @@ import { Firestore } from '@google-cloud/firestore';
 import * as admin from 'firebase-admin';
 import { EventEntity } from './event.entity';
 import moment from 'moment'; //moment.js for date manipulation
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class EventsService {
   private firestore: Firestore;
 
-  constructor() {
+  constructor(private readonly userService: UserService) {
     this.firestore = admin.firestore();
   }
 
@@ -32,6 +33,18 @@ export class EventsService {
 
     const eventId = this.firestore.collection('users').doc().id;
 
+    const user = await this.userService.getUserById(userId);
+    const userType = user.type;
+
+    const notificationOffsetsMapping: { [key: string]: number[] } = {
+      'Focused Learner': [30],
+      'Balanced Student': [30, 60],
+      'Distracted Student': [15, 30, 60],
+      'Procrastinator': [15, 30, 60, 120],
+    };
+
+    const notificationOffsets = notificationOffsetsMapping[userType] || [];
+
     for (let m = startDate.clone(); m.isSameOrBefore(endDate); m.add(1, 'days')) {
       const currentDay = m.format('dddd'); // Get the current day of the week (e.g., "Monday")
 
@@ -46,11 +59,11 @@ export class EventsService {
 
         // Add the event to the correct section based on the event type
         if (eventData.type === 'class') {
-          userData.schedule[dateKey].classes.push({ ...eventData, id: eventId });
+          userData.schedule[dateKey].classes.push({ ...eventData, id: eventId, notificationOffsets: notificationOffsets });
         } else if (eventData.type === 'exam') {
-          userData.schedule[dateKey].exams.push({ ...eventData, id: eventId });
+          userData.schedule[dateKey].exams.push({ ...eventData, id: eventId, notificationOffsets: notificationOffsets });
         } else if (eventData.type === 'task') {
-          userData.schedule[dateKey].tasks.push({ ...eventData, id: eventId });
+          userData.schedule[dateKey].tasks.push({ ...eventData, id: eventId, notificationOffsets: notificationOffsets });
         }
       }
     }

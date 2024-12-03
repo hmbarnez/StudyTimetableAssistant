@@ -96,8 +96,8 @@ const Profile = () => {
             <Text>Notification Settings</Text>
             <Text style={styles.arrow}>›</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.settingOption} onPress={() => router.push('/feedback')}>
-            <Text>Feedback</Text>
+          <TouchableOpacity style={styles.settingOption} onPress={() => router.push('/about')}>
+            <Text>About App</Text>
             <Text style={styles.arrow}>›</Text>
           </TouchableOpacity>
         </View>
@@ -143,8 +143,8 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   profileImage: {
-    width: 100,
-    height: 100,
+    width: 80,
+    height: 80,
     borderRadius: 50,
     marginBottom: 10,
   },

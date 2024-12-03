@@ -1,4 +1,4 @@
-import { View, Text, Image, Button, StyleSheet, Pressable } from 'react-native';
+import { View, Text, Image, StyleSheet, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import logo from '../../assets/images/logo.png';
@@ -7,33 +7,29 @@ import { router } from 'expo-router';
 export default function StartingScreen() {
 
     const styles = StyleSheet.create({
-        buttonContainer: {
-
-        },
         button: {
             width: 335,
             height: 56,
             borderRadius: 15,
-            borderColor: "red",
             margin: 10,
-            backgroundColor: "#00664F"
+            backgroundColor: "#00664F",
+            justifyContent: 'center',
+            alignItems: 'center',
         },
         buttonText: {
             color: "white",
-            textAlign: "center",
-            padding: 16,
             fontSize: 16,
-            // fontFamily: "Poppins"
+            textAlign: "center",
         }
-    })
+    });
 
     return (
         <SafeAreaView className="flex-1 items-center justify-center bg-[#4DC591]">
             <View className="w-full justify-center items-center min-h-[100vh]">
                 <Image source={logo} />
                 <View>
-                    <Pressable style={styles.button}>
-                        <Text className="font-pregular" style={styles.buttonText} onPress={() => { router.navigate('sign-in') }}>
+                    <Pressable style={styles.button} onPress={() => { router.navigate('sign-in') }}>
+                        <Text className="font-pregular" style={styles.buttonText}>
                             Sign In
                         </Text>
                     </Pressable>
@@ -47,7 +43,4 @@ export default function StartingScreen() {
             </View>
         </SafeAreaView>
     );
-
-
-
 }
