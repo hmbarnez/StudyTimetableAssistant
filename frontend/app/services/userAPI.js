@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Base URL for your backend API
 const api = axios.create({
-    baseURL: 'http://192.168.1.169:3000/users', // Use your local IP
+    baseURL: 'http://10.0.0.192:3000/users', // Use your local IP
 });
 
 export const fetchUser = async (userId) => {
