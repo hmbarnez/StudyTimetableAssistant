@@ -165,11 +165,16 @@ export class NotificationService implements OnModuleInit {
 
         // Schedule next-hour checks every hour
         setInterval(() => {
-            if (this.userId) {
-                this.checkNextHourForEvents(this.userId);
+            const currentHour = moment().hour();
+            if (currentHour >= 8 && currentHour <= 22) { // 8 AM to 10 PM
+                if (this.userId) {
+                    this.checkNextHourForEvents(this.userId);
+                } else {
+                    this.logger.warn('UserId is not set. Next-hour notifications will not be checked.');
+                }
             } else {
-                this.logger.warn('UserId is not set. Next-hour notifications will not be checked.');
+                this.logger.log(`Outside allowed time range for next-hour checks (8 AM - 10 PM). Current hour: ${currentHour}`);
             }
-        }, 3600000); // 3,600,000 ms = 1 hour
+        }, 3600000); // 3,600,000 ms = 1 hour // 3,600,000 ms = 1 hour
     }
 }
