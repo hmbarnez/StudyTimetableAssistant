@@ -10,6 +10,7 @@ import { fetchUser } from '../services/userAPI';
 import { router, useLocalSearchParams } from 'expo-router';
 import { setUser } from '../redux/reducers/userReducer';
 import { format } from 'date-fns';
+import { sendUserId } from '../services/registerForPushNotificationsAsync'
 
 const Home = () => {
   const [activeTab, setActiveTab] = useState('Classes');
@@ -53,6 +54,15 @@ const Home = () => {
       setExams([]);
     }
   }, [schedule, date]);
+
+  useEffect(() => {
+    // Trigger sendUserId when userId is available
+    if (userId) {
+      sendUserId(userId)
+        .then(() => console.log(`UserId ${userId} sent successfully!`))
+        .catch((error) => console.error('Failed to send userId:', error));
+    }
+  }, [userId]);
 
   const getContentForTab = () => {
     switch (activeTab) {
