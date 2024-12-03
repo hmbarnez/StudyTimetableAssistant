@@ -64,10 +64,12 @@ export class NotificationService implements OnModuleInit {
 
                 for (const event of events) {
                     const eventStartTime = moment(event.startingTime, 'HH:mm'); // Event's starting time
-                    const diffInMinutes = eventStartTime.diff(currentTime, 'minutes');
-                    // Send notification 1 hour before the event starts
-                    if (diffInMinutes === 60) {
-                        await this.sendPushNotification(event.subjectName, event.startingTime);
+                    const notificationOffsets = event.notificationOffsets || [60]; // Default to 1 hour before
+                    for (const offset of notificationOffsets) {
+                        const diffInMinutes = eventStartTime.diff(currentTime, 'minutes');
+                        if (diffInMinutes === offset) {
+                            await this.sendPushNotification(event.subjectName, event.startingTime);
+                        }
                     }
                 }
             }
@@ -81,6 +83,6 @@ export class NotificationService implements OnModuleInit {
         // Schedule a check for notifications every minute
         setInterval(() => {
             this.checkAndSendNotifications();
-        }, 60000000   ); // 60,000 ms = 1 minute
+        }, 600000   ); // 60,000 ms = 1 minute
     }
 }
