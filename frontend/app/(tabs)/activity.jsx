@@ -6,7 +6,9 @@ import React, { useState, useEffect } from 'react';
 import ExamActivity from '../../components/activity/ExamActivity';
 import ClassActivity from '../../components/activity/ClassActivity';
 import TaskActivity from '../../components/activity/TaskActivity';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { setSchedule } from '../redux/reducers/scheduleReducer';
+import { fetchEvents } from '../services/eventAPI';
 
 const Activity = () => {
   const intitialform = {
@@ -18,6 +20,7 @@ const Activity = () => {
   const [form, setForm] = useState(intitialform);
   const [activityType, setActivityType] = useState('Exams'); // Default to "Exams"
   const [userId, setUserId] = useState(null);
+  const dispatch = useDispatch();
 
   const userFromState = useSelector((state) => state.user.user);
 
@@ -58,7 +61,7 @@ const Activity = () => {
   }
 
 
-  const saveActivity = () => {
+  const saveActivity = async () => {
     let requestBody = {};
     if (activityType === 'Exams') {
       // Create the request body for an exam event
@@ -87,24 +90,29 @@ const Activity = () => {
         startingTime: form.taskStartTime, endingTime: form.taskEndTime, type: 'task'
       };
     }
-
-    // const userId = 'GwwihkBX4iMUZcWouAku'; // Replace with the actual user ID later with redux
-    // Submit the constructed requestBody  
-    axios.post(`http://localhost:3000/events/${userId}`, requestBody, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(response => {
-        console.log('Event saved successfully:', requestBody);
-        //reset the form
-        alert('Event saved successfully');
-        setForm(intitialform);
-      })
-      .catch(error => {
-        console.error('Error saving event:', error);
+  
+    try {
+      // Post the activity data
+      await axios.post(`http://10.0.0.192:3000/events/${userId}`, requestBody, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
+  
+      console.log('Event saved successfully:', requestBody);
+      alert('Event saved successfully');
+  
+      // Refetch the user's schedule
+      const updatedSchedule = await fetchEvents(userId); // Ensure fetchEvents is async
+      dispatch(setSchedule(updatedSchedule)); // Update the schedule in Redux
+  
+      // Reset the form
+      setForm(intitialform);
+    } catch (error) {
+      console.error('Error saving event:', error);
+    }
   };
+  
 
 
   const cancelActivity = () => {
