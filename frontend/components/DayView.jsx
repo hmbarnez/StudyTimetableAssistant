@@ -86,64 +86,7 @@ const Event = ({ event, index, eventSlots }) => {
 };
 
 const DayView = ({data}) => {
-  // const data = {
-  //   "classes": [
-  //     {
-  //       "subjectName": "classname",
-  //       "subject": "class1",
-  //       "building": "classbuild",
-  //       "room": "classroom",
-  //       "eventDays": "Wednesday",
-  //       "startingDate": "2024-11-13",
-  //       "endingDate": "2024-11-13",
-  //       "startingTime": "11:30",
-  //       "endingTime": "14:00",
-  //       "type": "class",
-  //       "id": "qaHdcf4cbsSxx5UvvGGK"
-  //     }
-  //   ],
-  //   "exams": [
-  //     {
-  //       "subjectName": "examsub",
-  //       "subject": "exam1",
-  //       "building": "exambuild",
-  //       "room": "examroom",
-  //       "startingDate": "2024-11-13",
-  //       "endingDate": "2024-11-13",
-  //       "eventDays": "Wednesday",
-  //       "startingTime": "10:30",
-  //       "endingTime": "11:50",
-  //       "type": "exam",
-  //       "id": "erVMTr9J6sYWqnF5lZFL"
-  //     }
-  //   ],
-  //   "tasks": [
-  //     {
-  //       "taskTitle": "task title",
-  //       "taskDescription": "task desc",
-  //       "eventDays": "Wednesday",
-  //       "startingDate": "2024-11-13",
-  //       "endingDate": "2024-11-20",
-  //       "startingTime": "11:00",
-  //       "endingTime": "13:00",
-  //       "type": "task",
-  //       "id": "arzr6fW29cIhcQdUW5M6"
-  //     },
-  //     {
-  //       "taskTitle": "task title 2",
-  //       "taskDescription": "task desc",
-  //       "eventDays": "Wednesday",
-  //       "startingDate": "2024-11-13",
-  //       "endingDate": "2024-11-20",
-  //       "startingTime": "11:00",
-  //       "endingTime": "13:00",
-  //       "type": "task",
-  //       "id": "arzr6fW29cIhcQdUW5M6"
-  //     }
-  //   ]
-  // }
   
-
   const events = prepareEventData(data);
   const sortedEvents = events.sort((a, b) => a.startMinute - b.startMinute);
   const eventSlots = findOverlaps(sortedEvents); // Detect overlaps
