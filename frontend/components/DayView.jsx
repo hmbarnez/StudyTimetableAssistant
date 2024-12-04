@@ -11,16 +11,14 @@ const prepareEventData = (data) => {
 
   ['classes', 'exams', 'tasks'].forEach((type) => {
     data[type]?.forEach((event) => {
-      console.log('event:', event);
-      console.log('type:', type);
       allEvents.push({
         ...event,
         startMinute: parseTimeToMinutes(event.startingTime),
         endMinute: parseTimeToMinutes(event.endingTime),
-        eventColor: 
-          type === 'classes' ? '#ACE7F4' : 
-          type === 'exams' ? '#ACF4D1' : 
-          '#ffcf56',
+        eventColor:
+          type === 'classes' ? '#ACE7F4' :
+            type === 'exams' ? '#ACF4D1' :
+              '#ffcf56',
       });
     });
   });
@@ -54,12 +52,12 @@ const Event = ({ event, index, eventSlots }) => {
   const startMinute = event.startMinute;
   const endMinute = event.endMinute;
   const duration = endMinute - startMinute;
-  
+
   // Find the number of overlapping events
   const overlappingCount = Math.max(
     ...eventSlots.slice(startMinute, endMinute).map((slot) => slot.length)
   );
-  
+
   // Determine the event's position based on overlaps
   const widthPercentage = 80 / overlappingCount; // Divide width for overlaps
   const overlapIndex = eventSlots[startMinute].indexOf(index); // Index in overlap
@@ -79,15 +77,14 @@ const Event = ({ event, index, eventSlots }) => {
     >
       <Text style={styles.eventText}>{event.subjectName || event.taskTitle}</Text>
       <Text style={styles.eventTime}>
-        {event.startingTime} - {event.endingTime} 
+        {event.startingTime} - {event.endingTime}
       </Text>
     </View>
   );
 };
 
-const DayView = ({data}) => {
-  console.log('data:', data);
-  
+const DayView = ({ data }) => {
+
   const events = prepareEventData(data);
   const sortedEvents = events.sort((a, b) => a.startMinute - b.startMinute);
   const eventSlots = findOverlaps(sortedEvents); // Detect overlaps

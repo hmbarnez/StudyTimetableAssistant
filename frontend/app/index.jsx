@@ -16,7 +16,7 @@ export default function App() {
   useEffect(() => {
     const checkUserAuth = async () => {
       const token = await AsyncStorage.getItem('token');
-      // console.log(token)
+
       if (token) {
         try {
           // Decode the token to get user data

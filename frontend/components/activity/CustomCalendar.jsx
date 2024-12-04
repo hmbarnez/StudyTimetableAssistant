@@ -5,7 +5,7 @@ import { Calendar } from "react-native-calendars";
 import { icons } from "../../constants";
 
 
-const CustomCalendar = ({ date, setDate, onClose, handleInputChange, fieldName}) => {
+const CustomCalendar = ({ date, setDate, onClose, handleInputChange, fieldName }) => {
 
   return (
     <View>
@@ -27,7 +27,6 @@ const CustomCalendar = ({ date, setDate, onClose, handleInputChange, fieldName})
             dotColor: "#4DC591",
           }}
           onDayPress={(day) => {
-            // console.log("selected day", day);
             setDate(day.dateString); // Update the date in the parent component
             handleInputChange(fieldName, day.dateString);
             setTimeout(() => {
