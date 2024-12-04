@@ -13,23 +13,19 @@ const Schedule = () => {
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split('T')[0] // Default to today's date
   );
-  console.log('selectedDate:', selectedDate);
 
   // Get the schedule data from the redux store
   const scheduleData = useSelector((state) => state.schedule) || {};
-  console.log('scheduleData:', scheduleData);
   
   // Get the schedule for the selected date, or default to empty categories
+  //example: scheduleData = { '2022-03-01': { classes: [], exams: [], tasks: [] } }
   const selectedSchedule = scheduleData[selectedDate] || {
     classes: [],
     exams: [],
     tasks: [],
   };
+
   
-  console.log('selectedSchedule fr:', selectedSchedule);
-
-
-
   return (
     <View className="bg-white px-4 pt-20 h-full w-full justify-center">
       <View className="flex flex-row justify-evenly items-center pt-10 bg-white">

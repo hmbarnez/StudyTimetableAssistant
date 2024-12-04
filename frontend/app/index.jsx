@@ -16,7 +16,7 @@ export default function App() {
   useEffect(() => {
     const checkUserAuth = async () => {
       const token = await AsyncStorage.getItem('token');
-      console.log(token)
+      // console.log(token)
       if (token) {
         try {
           // Decode the token to get user data
@@ -51,7 +51,7 @@ export default function App() {
 
       if (token) {
         try {
-          await fetch('http://10.0.0.192:3000/notifications/register', {
+          await fetch('http://10.0.0.206:3000/notifications/register', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

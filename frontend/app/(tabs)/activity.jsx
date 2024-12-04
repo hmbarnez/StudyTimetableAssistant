@@ -14,7 +14,7 @@ const Activity = () => {
   const intitialform = {
     examSubject: '', examSubjectName: '', examRoom: '', examBuilding: '', examDate: '', examStartTime: '', examEndTime: '',
     classSubject: '', classSubjectName: '', classRoom: '', classBuilding: '', classDays: '', classStartDate: '', classEndDate: '', classStartTime: '', classEndTime: '',
-    taskTitle: '', taskDescription: '', taskDate: '', taskStartDate: '', taskEndDate: '', taskStartTime: '', taskEndTime: '', taskDays: '', taskOccurs: 'Once'
+    taskTitle: '', taskDescription: '', taskDate: '', taskStartDate: '', taskEndDate: '', taskStartTime: '', taskEndTime: '', taskDays: '', taskOccurs: 'Once', taskStudy: false
   };
 
   const [form, setForm] = useState(intitialform);
@@ -55,7 +55,6 @@ const Activity = () => {
 
   // get the day of the week using moment and .format('dddd')
   const getDayOfWeekFromDate = (formDate) => {
-    // console.log('formDate:', formDate);
     const date = moment(formDate, 'YYYY-MM-DD');
     return date.format('dddd');
   }
@@ -87,7 +86,8 @@ const Activity = () => {
       requestBody = {
         taskTitle: form.taskTitle, taskDescription: form.taskDescription,
         eventDays: taskDaysFormatted, startingDate, endingDate,
-        startingTime: form.taskStartTime, endingTime: form.taskEndTime, type: 'task'
+        startingTime: form.taskStartTime, endingTime: form.taskEndTime, type: 'task',
+        taskStudy: form.taskStudy
       };
     }
   
@@ -99,7 +99,6 @@ const Activity = () => {
         },
       });
   
-      console.log('Event saved successfully:', requestBody);
       alert('Event saved successfully');
   
       // Refetch the user's schedule
