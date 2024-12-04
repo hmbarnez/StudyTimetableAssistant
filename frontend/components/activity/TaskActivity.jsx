@@ -1,9 +1,10 @@
 import React from "react";
 import { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, CheckBox } from "react-native";
+import { View, Text, TextInput, TouchableOpacity} from "react-native";
 import CustomDatePicker from "./CustomDatePicker";
 import CustomTimePicker from "./CustomTimePicker";
 import CustomWeekdayPicker from "./CustomWeekdayPicker";
+import CheckBox from "expo-checkbox"
 
 const TaskActivity = ({
   form,

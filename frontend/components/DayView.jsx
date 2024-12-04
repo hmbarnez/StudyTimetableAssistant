@@ -86,6 +86,7 @@ const Event = ({ event, index, eventSlots }) => {
 };
 
 const DayView = ({data}) => {
+  console.log('data:', data);
   
   const events = prepareEventData(data);
   const sortedEvents = events.sort((a, b) => a.startMinute - b.startMinute);

@@ -93,7 +93,7 @@ const Activity = () => {
   
     try {
       // Post the activity data
-      await axios.post(`http://10.0.0.192:3000/events/${userId}`, requestBody, {
+      await axios.post(`http://10.0.0.206:3000/events/${userId}`, requestBody, {
         headers: {
           'Content-Type': 'application/json',
         },
