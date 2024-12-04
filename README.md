@@ -85,7 +85,7 @@
 <!--'Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`-->
 Study Timetable Assistant is an application tailored to meet the needs of students managing their academic lives. Designed to enhance organization and efficiency, this app allows students to effectively structure their academic schedules by adding exams, classes, and tasks to a personalized timetable.
 
-The core functionality revolves around its dynamic scheduling capabilities, which not only display a well-organized timetable but also provide customized notifications. These notifications alert users about upcoming academic activities, helping them stay prepared and on track.
+The core functionality revolves around its dynamic scheduling capabilities, which not only display a well-organized timetable but also provide customized notifications. These notifications alert users about upcoming academic activities, helping them stay prepared and on track. Additionally, there's a feature allows users to set a weekly study time goal during the initial account setup. As students log their study sessions, the app automatically subtracts the time spent from their weekly goal and provides progress updates. If the weekly study hours are not met, the app sends random notifications encouraging users to study, ensuring they stay on track with their academic objectives.
 
 One of the unique features of the Study Timetable Assistant is the initial setup process, where users create an account and answer a series of questions. These questions are designed to ascertain the user's specific needs and preferences, which then determines the type of account they receive. Depending on the account type, notification settings are tailored, ensuring that each student receives reminders in a manner that best supports their academic success.
 
@@ -109,13 +109,22 @@ This project leverages modern software architecture and user-centric design to o
 To get a local copy up and running follow these simple example steps.
 
 ### Prerequisites
-- Setup a firestore database
-- Set up a react project on a compatible IDE.
-* npm
+- Node.js: Install Node.js, which is required to run the Nest.js backend. You can download it from Node.js official website.
+- Nest.js: After installing Node.js, install the Nest.js CLI globally using npm:
+   ```sh
+  npm i -g @nestjs/cli
+  ```
+- Expo CLI: The Expo CLI is required to serve and test the frontend. Install it globally using npm:
   ```sh
   npm install npm@latest -g
   ```
-
+- Firebase Account: Since Firestore is used as the database, a Firebase account is necessary. Sign up or log in at Firebase and set up a Firestore database.
+- Firebase CLI 
+  ```sh
+  npm install -g firebase-tools
+  ```
+- Environment Variables: Set up necessary environment variables for both the backend and frontend. For the backend, you'll need to configure access to Firestore and potentially other Firebase services. For the frontend, ensure the API URLs and any other necessary config are properly set.
+- IDE/Code Editor: A suitable IDE or code editor such as Visual Studio Code, which can be downloaded from Visual Studio Code, to write and manage your code effectively.
 ### Installation
 1. Clone the repo
    ```sh
@@ -125,15 +134,6 @@ To get a local copy up and running follow these simple example steps.
    ```sh
    npm install
    ```
-<!-- 4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ``` 
-5. Change git remote url to avoid accidental pushes to base project
-   ```sh
-   git remote set-url origin github_username/repo_name
-   git remote -v # confirm the changes
-   ```-->
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
