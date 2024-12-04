@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, CheckBox } from "react-native";
 import CustomDatePicker from "./CustomDatePicker";
 import CustomTimePicker from "./CustomTimePicker";
 import CustomWeekdayPicker from "./CustomWeekdayPicker";
@@ -14,6 +14,7 @@ const TaskActivity = ({
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [taskDate, setTaskDate] = useState(""); //for one time task
+  
   return (
     <>
       <View>
@@ -42,6 +43,16 @@ const TaskActivity = ({
           multiline // Added multiline for better input experience
         />
       </View>
+
+      <View>
+        <Text className="text-l font-psemibold mt-2">Study Task?</Text>
+        <CheckBox
+          value={form.taskStudy} // Use a field from `form` for controlled state
+          onValueChange={(newValue) => handleInputChange("taskStudy", newValue)}
+          className="mt-2 ml-2 scale-125"
+        />
+      </View>
+
       {/* Occurs Toggle */}
       <View>
         <Text className="text-l font-psemibold mt-2">Occurs</Text>

@@ -20,7 +20,7 @@ const CustomWeekdayPicker = ({handleInputChange, fieldName}) => {
   useEffect(() => {
     const daysString = selectedDays.join(', ');
     handleInputChange(fieldName, daysString);
-    console.log('Selected days:', daysString);
+    // console.log('Selected days:', daysString);
   }, [selectedDays]);
 
 
