@@ -94,7 +94,6 @@ export class NotificationService implements OnModuleInit {
     }
 
     async checkNextHourForEvents(userId: string) {
-        console.log('d')
         if (!userId) {
             this.logger.warn('UserId is not set. Skipping next-hour check.');
             return;
@@ -114,7 +113,7 @@ export class NotificationService implements OnModuleInit {
 
             const userData = userDoc.data();
             const schedule = userData?.schedule;
-            const studyHours = userData?.studyHours || 0;
+            const remainTime = userData?.remainTime || 0;
 
             if (!schedule) {
                 this.logger.warn(`No schedule found for user ${userId}`);
@@ -142,14 +141,36 @@ export class NotificationService implements OnModuleInit {
                 );
             });
 
-            if (!hasNextHourEvent && studyHours > 0) {
+            if (!hasNextHourEvent && remainTime > 0) {
                 await this.sendPushNotification(
                     'Time to Study!',
-                    `You have ${studyHours} hours left for study. Make the most of this free time!`
+                    `You have ${remainTime} hours left for study. Make the most of this free time!`
                 );
             }
         } catch (error) {
             this.logger.error(`Error checking next-hour events for user ${userId}`, error.message);
+        }
+    }
+
+    async resetRemainTime() {
+        try {
+            this.logger.log('Starting reset of remainTime.');
+
+            // Fetch all user documents
+            const usersSnapshot = await this.firestore.collection('users').get();
+
+            // Reset remainTime for each user
+            const updatePromises = usersSnapshot.docs.map(doc => {
+                const userData = doc.data();
+                const studyHours = userData.studyHours || 0; // Default to 0 if not defined
+                return doc.ref.update({ remainTime: studyHours });
+            });
+
+            await Promise.all(updatePromises);
+
+            this.logger.log('Successfully reset remainTime for all users.');
+        } catch (error) {
+            this.logger.error('Error resetting remainTime:', error.message);
         }
     }
 
@@ -175,6 +196,16 @@ export class NotificationService implements OnModuleInit {
             } else {
                 this.logger.log(`Outside allowed time range for next-hour checks (8 AM - 10 PM). Current hour: ${currentHour}`);
             }
-        }, 3600000); // 3,600,000 ms = 1 hour // 3,600,000 ms = 1 hour
+        }, 3600000);// 3,600,000 ms = 1 hour // 3,600,000 ms = 1 hour
+
+        setInterval(() => {
+            const now = moment();
+            const isMonday = now.day() === 1; // Monday is day 1 in moment.js
+            const isMidnight = now.hour() === 0 && now.minute() === 0;
+
+            if (isMonday && isMidnight) {
+                this.resetRemainTime();
+            }
+        }, 60000);
     }
 }

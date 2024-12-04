@@ -63,7 +63,7 @@ const questions = [
       "I run and hide, pretending the reminder never existed."
     ]
   },
-  
+
   {
     question: "How many hours do you wish to study per week?",
     inputType: "numeric",
@@ -103,7 +103,7 @@ const AccountForm = () => {
     const accountType = typeMap[maxType];
 
     try {
-      const updatedUser = await updateUser(user.id, { type: accountType, studyHours });
+      const updatedUser = await updateUser(user.id, { type: accountType, studyHours, remainTime: studyHours });
       dispatch(setUser(updatedUser));
       navigation.navigate('account-created');
     } catch (error) {

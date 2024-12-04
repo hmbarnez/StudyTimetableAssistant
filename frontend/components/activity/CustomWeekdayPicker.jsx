@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { MultiSelect } from 'react-native-element-dropdown';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
-const CustomWeekdayPicker = ({handleInputChange, fieldName}) => {
+const CustomWeekdayPicker = ({ handleInputChange, fieldName }) => {
   const [selectedDays, setSelectedDays] = useState([]);
 
   // Days of the week data
@@ -20,7 +20,6 @@ const CustomWeekdayPicker = ({handleInputChange, fieldName}) => {
   useEffect(() => {
     const daysString = selectedDays.join(', ');
     handleInputChange(fieldName, daysString);
-    // console.log('Selected days:', daysString);
   }, [selectedDays]);
 
 
