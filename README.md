@@ -194,6 +194,17 @@ Coming Soon...
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Top contributors:
+  <a href="https://github.com/aadams36">  Hafiz Adams
+</a>
+
+ <a href="https://github.com/hmbarnez">  Harrison Barnes
+</a>
+
+ <a href="https://github.com/khoatran3005">  Khoa Tran
+</a>
+
+ <a href="https://github.com/MukeCelestino"> Muketoi Celestino
+</a>
 
 <!--
 <a href="https://github.com/github_username/repo_name/graphs/contributors">
