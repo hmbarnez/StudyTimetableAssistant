@@ -43,7 +43,7 @@
     and receive timely notifications based on their activities and account type.
     <br />
     <br />
-    <a href="https://github.com/hmbarnez/StudyTimetableAssistant.git">View Demo</a>
+<!--     <a href="https://github.com/hmbarnez/StudyTimetableAssistant.git">View Demo</a> -->
   </p>
 </div>
 
