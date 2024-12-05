@@ -16,4 +16,5 @@ export class EventEntity {
   task?: TaskEntity;      // Optional: Only if type is 'task'
 
   eventDays?: string[];
+  taskStudy?: boolean
 }

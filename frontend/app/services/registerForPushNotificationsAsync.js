@@ -17,7 +17,7 @@ export async function registerForPushNotificationsAsync() {
 
 export async function sendUserId(userId) {
     try {
-        await axios.post('http://10.0.0.192:3000/notifications/id', {
+        await axios.post('http://localhost:3000/notifications/id', {
             userId: userId,
         });
     } catch (error) {

@@ -51,7 +51,7 @@ export default function App() {
 
       if (token) {
         try {
-          await fetch('http://10.0.0.206:3000/notifications/register', {
+          await fetch('http://localhost:3000/notifications/register', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

@@ -64,15 +64,14 @@ export class EventsService {
           userData.schedule[dateKey].exams.push({ ...eventData, id: eventId, notificationOffsets: notificationOffsets });
         } else if (eventData.type === 'task') {
           userData.schedule[dateKey].tasks.push({ ...eventData, id: eventId, notificationOffsets: notificationOffsets });
-          if (eventData.task?.taskStudy) {
+          if (eventData.taskStudy) {
             const eventStartTime = moment(eventData.startingTime, 'HH:mm');
             const eventEndTime = moment(eventData.endingTime, 'HH:mm');
             const studyTime = eventEndTime.diff(eventStartTime, 'minutes');
-            userData.remainTime = Math.max(0, userData.remainTime - studyTime);
-
+            userData.remainTime = Math.max(0, ((userData.remainTime * 60) - studyTime) / 60);
+            await userRef.update({ remainTime: userData.remainTime });
             console.log(`Updated remainTime: ${userData.remainTime}`);
           }
-
         }
       }
     }
