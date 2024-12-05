@@ -96,7 +96,7 @@ This project leverages modern software architecture and user-centric design to o
 ### Built With
 
 * [![Nest][Nest.js]][Nest-url]
-* [![React][React.js]][React-url]
+* [![React Native][React-Native.js]][React-Native-url]
 * [![Expo][Expo]][Expo-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -258,6 +258,8 @@ Project Link: [https://github.com/hmbarnez/StudyTimetableAssistant.git]([https:/
 [Expo-url]: https://expo.dev/
 [React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
 [React-url]: https://reactjs.org/
+[React-Native.js]: https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[React-Native-url]: https://reactnative.dev/
 [Vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
 [Vue-url]: https://vuejs.org/
 [Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
