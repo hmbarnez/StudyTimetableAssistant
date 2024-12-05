@@ -133,7 +133,8 @@ To get a local copy up and running follow these simple example steps.
    ```sh
    npm install
    ```
-
+3. Download .env file and add it to the frontend.
+4. Download serviceAccountKey.json file and add it to the backend-->src
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
